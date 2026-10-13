@@ -601,6 +601,35 @@ Day 3,2026-10-18,13:45,15:30,105 min,Closing – The Endgame,session,Conference 
               </div>
             </div>
 
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-muted-text block mb-1">Participant Track:</label>
+                <select
+                  value={editingSession.track || 'all'}
+                  onChange={(e) => setEditingSession({ ...editingSession, track: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-surface-card border border-white/15 text-off-white outline-none"
+                >
+                  <option value="all">All Membership</option>
+                  <option value="newbies">Newbies</option>
+                  <option value="igv">iGV Members</option>
+                  <option value="mms">MMs & Oldies</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-muted-text block mb-1">Session Type:</label>
+                <select
+                  value={editingSession.type || 'session'}
+                  onChange={(e) => setEditingSession({ ...editingSession, type: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-surface-card border border-white/15 text-off-white outline-none"
+                >
+                  <option value="session">Session</option>
+                  <option value="break">Break / Meal</option>
+                  <option value="logistics">Logistics</option>
+                  <option value="party">Party / Gala</option>
+                </select>
+              </div>
+            </div>
+
             <div>
               <label className="text-muted-text block mb-1">Tactical Briefing / Essence:</label>
               <textarea

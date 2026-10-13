@@ -43,7 +43,7 @@ interface AgendaContextType {
 
 const AgendaContext = createContext<AgendaContextType | null>(null);
 
-const CACHE_KEY = 'rabat_agenda_cache_v2';
+const CACHE_KEY = 'rabat_agenda_cache_v3';
 const FAVORITES_KEY = 'rabat_agenda_favorites_v2';
 const DISMISSED_ALERTS_KEY = 'rabat_dismissed_alerts_v2';
 

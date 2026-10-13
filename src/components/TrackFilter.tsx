@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-
-export type TrackType = 'all' | 'newbies' | 'mms';
+import { TrackType } from '../data/agenda';
 
 interface TrackFilterProps {
   activeTrack: TrackType;
@@ -9,12 +8,36 @@ interface TrackFilterProps {
   dayNumber?: number;
 }
 
-export const TrackFilter: React.FC<TrackFilterProps> = ({ activeTrack, onChangeTrack, dayNumber = 3 }) => {
-  const tracks: { id: TrackType; label: string }[] = [
-    { id: 'all', label: 'All Tracks' },
-    { id: 'newbies', label: 'Newbies' },
-    { id: 'mms', label: 'MMs & Oldies' },
-  ];
+export const TrackFilter: React.FC<TrackFilterProps> = ({ activeTrack, onChangeTrack, dayNumber = 2 }) => {
+  const getTracksForDay = (): { id: TrackType; label: string }[] => {
+    switch (dayNumber) {
+      case 1:
+        return [
+          { id: 'all', label: 'All Membership' }
+        ];
+      case 2:
+        return [
+          { id: 'all', label: 'All Tracks' },
+          { id: 'newbies', label: 'Newbies' },
+          { id: 'igv', label: 'iGV Members' }
+        ];
+      case 3:
+        return [
+          { id: 'all', label: 'All Tracks' },
+          { id: 'newbies', label: 'Newbies' },
+          { id: 'mms', label: 'MMs & Oldies' }
+        ];
+      default:
+        return [
+          { id: 'all', label: 'All Tracks' },
+          { id: 'newbies', label: 'Newbies' },
+          { id: 'igv', label: 'iGV Members' },
+          { id: 'mms', label: 'MMs & Oldies' }
+        ];
+    }
+  };
+
+  const tracks = getTracksForDay();
 
   // Day-based gradient for track filter
   const getActivePillGradient = () => {
@@ -25,7 +48,6 @@ export const TrackFilter: React.FC<TrackFilterProps> = ({ activeTrack, onChangeT
         return 'bg-gradient-to-r from-infinity-purple to-cosmic-blue shadow-glow-purple';
       case 3:
       default:
-        // Day 3 Endgame Gold
         return 'bg-gradient-to-r from-endgame-gold to-earth-brown shadow-glow-gold text-midnight';
     }
   };

@@ -52,7 +52,7 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
   // Export .ics calendar event
   const handleDownloadIcs = () => {
     // Find date for session
-    let sessionDate = '2026-10-09';
+    let sessionDate = '2026-10-16';
     if (agenda?.days) {
       for (const d of Object.values(agenda.days) as any[]) {
         if (d.sessions?.some((s: Session) => s.id === session.id)) {
@@ -63,12 +63,13 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
     }
 
     const dateFormatted = sessionDate.replace(/-/g, '');
-    const [startH, startM] = effectiveStart.split(':');
-    const startStr = `${dateFormatted}T${startH || '00'}${startM || '00'}00`;
+    const startTimeVal = effectiveStart || '09:00';
+    const [startH, startM] = startTimeVal.split(':');
+    const startStr = `${dateFormatted}T${(startH || '09').padStart(2, '0')}${(startM || '00').padStart(2, '0')}00`;
 
-    let [endH, endM] = (effectiveEnd || '18:00').split(':');
-    if (!endH) endH = String(parseInt(startH, 10) + 1);
-    const endStr = `${dateFormatted}T${String(endH).padStart(2, '0')}${endM || '00'}00`;
+    let [endH, endM] = (effectiveEnd || '10:00').split(':');
+    if (!endH) endH = String(parseInt(startH || '9', 10) + 1);
+    const endStr = `${dateFormatted}T${String(endH).padStart(2, '0')}${(endM || '00').padStart(2, '0')}00`;
 
     const title = `[Rabat CO 26.2] ${session.title}`;
     const description = `${session.essence || ''}\\nFacilitator: ${session.facilitator || 'AIESEC in Rabat'}\\nRoom: ${session.room || 'Plenary'}`;
@@ -240,14 +241,22 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
                   <span>Time:</span>
                 </div>
                 <div className="text-right">
-                  {isDelayed && (
-                    <span className="line-through text-muted-text/70 mr-2 text-xs tabular-nums">
-                      {session.time} {session.endTime ? `– ${session.endTime}` : ''}
+                  {effectiveStart ? (
+                    <>
+                      {isDelayed && (
+                        <span className="line-through text-muted-text/70 mr-2 text-xs tabular-nums">
+                          {session.time} {session.endTime ? `– ${session.endTime}` : ''}
+                        </span>
+                      )}
+                      <span className={`font-bold tabular-nums ${isDelayed ? 'text-amber-400 font-extrabold' : 'text-off-white'}`}>
+                        {effectiveStart} {effectiveEnd ? `– ${effectiveEnd}` : ''}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-xs text-muted-text font-medium italic">
+                      Official time TBA
                     </span>
                   )}
-                  <span className={`font-bold tabular-nums ${isDelayed ? 'text-amber-400 font-extrabold' : 'text-off-white'}`}>
-                    {effectiveStart} {effectiveEnd ? `– ${effectiveEnd}` : ''}
-                  </span>
                 </div>
               </div>
 

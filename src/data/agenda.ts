@@ -5,6 +5,8 @@
 
 export type SessionStatus = 'scheduled' | 'starting-soon' | 'live' | 'delayed' | 'completed' | 'cancelled';
 
+export type TrackType = 'all' | 'newbies' | 'igv' | 'mms';
+
 export interface SessionResource {
   title: string;
   url: string;
@@ -13,8 +15,9 @@ export interface SessionResource {
 
 export interface Session {
   id: string;
-  time: string; // HH:mm format (original planned start)
-  endTime?: string; // HH:mm format (original planned end)
+  time?: string; // HH:mm format (original planned start, if verified)
+  startTime?: string;
+  endTime?: string; // HH:mm format (original planned end, if verified)
   duration?: number | string; // in minutes or text e.g. "45 min"
   adjustedTime?: string; // HH:mm format (revised start)
   adjustedEndTime?: string; // HH:mm format (revised end)
@@ -29,7 +32,7 @@ export interface Session {
   facilitator?: string;
   responsible?: string; // alias for facilitator
   badge?: 'Director' | 'S.H.I.E.L.D. Agent' | 'Tower Commander' | 'Ops Crew' | string;
-  track?: 'all' | 'newbies' | 'mms' | string;
+  track?: 'all' | 'newbies' | 'igv' | 'mms' | string;
   concreteObjective?: string;
   emotionalObjective?: string;
   learningObjectives?: string[];
@@ -38,11 +41,11 @@ export interface Session {
 }
 
 export function normalizeSession(s: Partial<Session> & Record<string, any>, defaultId: string): Session {
-  const room = s.room || s.location || 'Plenary Hall • Valhalla Grand Stage';
+  const room = s.room || s.location || '';
   const facilitator = s.facilitator || s.responsible || '';
   const essence = s.essence || s.description || '';
   const title = s.title || s.name || 'Session';
-  const time = s.time || s.startTime || '09:00';
+  const time = s.time || s.startTime || '';
   const endTime = s.endTime || '';
 
   const objectives = Array.isArray(s.learningObjectives) ? [...s.learningObjectives] : [];
@@ -54,6 +57,7 @@ export function normalizeSession(s: Partial<Session> & Record<string, any>, defa
   return {
     id: s.id || defaultId,
     time,
+    startTime: time,
     endTime,
     duration: s.duration || '',
     adjustedTime: s.adjustedTime,
@@ -119,11 +123,10 @@ export interface ConferenceAgenda {
 }
 
 /**
- * Returns only the name after "-" / "–" / "—" if present, otherwise returns original title
+ * Preserves the exact session title and subtitle
  */
 export function formatSessionTitle(title: string): string {
-  const match = title.match(/^[^–—-]*[–—-]\s*(.+)$/);
-  return match ? match[1].trim() : title.trim();
+  return title ? title.trim() : '';
 }
 
 export const AGENDA_DATA: ConferenceAgenda = {
@@ -144,7 +147,9 @@ export const AGENDA_DATA: ConferenceAgenda = {
 This conference is our Endgame moment: not to erase what happened, but to face it — to rebuild trust, reconnect the team, and develop the next generation of Avengers who won't repeat the mistakes of the last one.
 
 Different powers. Different perspectives. One team. One mission.
-Avengers, Assemble.`
+Avengers, Assemble.`,
+    lastUpdated: "2026-10-13T02:30:00Z",
+    version: 2
   },
   days: {
     day1: {
@@ -161,85 +166,75 @@ Avengers, Assemble.`
       sessions: [
         {
           id: "d1-s0",
-          time: "08:00",
+          time: "",
           type: "logistics",
           title: "Check In",
-          essence: "Arrival, credential verification, mission pack collection, and room allotment."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d1-s1",
-          time: "17:00",
+          time: "",
           type: "session",
-          title: "Avengers, Assemble!",
-          essence: "The iconic moment where everyone officially comes together.",
-          facilitator: "Chair",
-          badge: "Director"
+          title: "Opening – Avengers, Assemble",
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d1-s2",
-          time: "18:30",
+          time: "",
           type: "session",
-          title: "The Avengers Initiative",
-          essence: "Understanding what brought the Avengers together and connecting it to AIESEC's purpose.",
-          facilitator: "Wadii",
-          badge: "S.H.I.E.L.D. Agent"
+          title: "ESSENCE",
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d1-s3",
-          time: "19:15",
+          time: "",
           type: "break",
           title: "Break",
-          essence: "Tactical recharge and plenary hall transition."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d1-s4",
-          time: "19:30",
+          time: "",
           type: "session",
-          title: "The Broken Shield",
-          essence: "Captain America's shield as a symbol of trust, identity, and something that can be damaged and rebuilt.",
-          facilitator: "Soukaina",
-          badge: "S.H.I.E.L.D. Agent"
+          title: "AIESEC 101 – The Avengers Initiative",
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d1-s5",
-          time: "20:15",
+          time: "",
           type: "session",
-          title: "The Captain's Shield",
-          essence: "Leadership, responsibility, and stepping up when others need you.",
-          facilitator: "Meryem",
-          badge: "S.H.I.E.L.D. Agent"
+          title: "What Is Not a Team? – Not Every Hero Is an Avenger",
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d1-s6",
-          time: "21:00",
+          time: "",
           type: "break",
           title: "Dinner",
-          essence: "Mess Hall Refuel & Squad Bonding."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d1-s7",
-          time: "21:45",
+          time: "",
           type: "session",
-          title: "Not Every Hero Is an Avenger",
-          essence: "Having powerful individuals does not automatically create a team.",
-          facilitator: "Oussama",
-          badge: "S.H.I.E.L.D. Agent"
+          title: "Evening Plenary",
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d1-s8",
-          time: "22:45",
-          type: "session",
-          title: "The Battle Debrief",
-          essence: "Reflecting on what happened and preparing for the next mission.",
-          facilitator: "Chair",
-          badge: "Director"
-        },
-        {
-          id: "d1-s9",
-          time: "23:45",
+          time: "",
           type: "party",
-          title: "Stark Expo Nights",
-          essence: "Unwind, celebrate day one breakthroughs, and bond with your fellow operatives."
+          title: "Party D1 : XXXX",
+          track: "all",
+          status: "scheduled"
         }
       ]
     },
@@ -253,133 +248,135 @@ Avengers, Assemble.`
       tagline: "Mastering specialization & the battle formation",
       themeDesc: "Testing our limits, mastering specialized disciplines, and forging an unbreakable battle formation.",
       accent: "purple",
-      track_split: false,
+      track_split: true,
       sessions: [
         {
           id: "d2-s0",
-          time: "08:15",
+          time: "",
           type: "break",
           title: "Breakfast",
-          essence: "Fueling up for an intense day of tactical workshops."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d2-s1",
-          time: "09:30",
+          time: "",
           type: "session",
+          title: "Morning Plenary",
           track: "all",
-          title: "Rise of the Avengers",
-          essence: "Starting the next chapter with renewed energy.",
-          facilitator: "Chair",
-          badge: "Director"
+          status: "scheduled"
         },
         {
           id: "d2-s2",
-          time: "10:30",
+          time: "",
           type: "session",
-          track: "all",
-          title: "The Ancient One",
-          essence: "Wisdom, guidance, and helping others see beyond their current perspective.",
-          facilitator: "Imane",
-          badge: "S.H.I.E.L.D. Agent"
+          title: "Coach Session – The Ancient One",
+          track: "newbies",
+          status: "scheduled"
         },
         {
           id: "d2-s3",
-          time: "11:15",
+          time: "",
           type: "break",
           title: "Break",
-          essence: "Transition to functional spaces."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d2-s4",
-          time: "11:30",
+          time: "",
           type: "session",
-          track: "all",
-          title: "The Avengers Tower",
-          essence: "Different heroes have different specialties, but they operate from one headquarters.",
-          facilitator: "LCVPs (Soukaina, Wadii, Oussama, Imane)",
-          badge: "Tower Commander"
+          title: "Functional Spaces – The Avengers Tower",
+          track: "newbies",
+          status: "scheduled"
         },
         {
-          id: "d2-s5",
-          time: "12:30",
+          id: "d2-s5a",
+          time: "",
           type: "session",
-          track: "all",
-          title: "The Battle Formation",
-          essence: "Heroes with different abilities become powerful when they work together.",
-          facilitator: "Soukaina",
-          badge: "S.H.I.E.L.D. Agent"
+          title: "Synergy – The Battle Formation",
+          track: "newbies",
+          status: "scheduled"
+        },
+        {
+          id: "d2-s5b",
+          time: "",
+          type: "session",
+          title: "The Power of the Pitch",
+          track: "igv",
+          status: "scheduled"
         },
         {
           id: "d2-s6",
-          time: "14:00",
+          time: "",
           type: "break",
           title: "Lunch",
-          essence: "Squad recharge and fellowship."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d2-s7",
-          time: "15:00",
+          time: "",
           type: "session",
-          track: "all",
-          title: "The Multiverse",
-          essence: "Different worlds have different cultures, values, and ways of operating.",
-          facilitator: "Oussama",
-          badge: "S.H.I.E.L.D. Agent"
+          title: "Types of Cultures – The Multiverse",
+          track: "newbies",
+          status: "scheduled"
         },
         {
           id: "d2-s8",
-          time: "15:45",
+          time: "",
           type: "break",
           title: "Break",
-          essence: "Pre-hackathon setup and team assembling."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d2-s9",
-          time: "16:00",
+          time: "",
           type: "session",
-          track: "all",
-          title: "Stark Industries: Innovation Lab",
-          essence: "A high-energy creation challenge where teams build something under pressure.",
-          facilitator: "TBD",
-          badge: "Ops Crew"
+          title: "Hackathon – Stark Industries: Innovation Lab",
+          track: "newbies",
+          status: "scheduled"
         },
         {
           id: "d2-s10",
-          time: "18:45",
+          time: "",
           type: "break",
           title: "Dinner",
-          essence: "Evening refuel before the grand accords and gala."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d2-s11",
-          time: "19:15",
+          time: "",
           type: "session",
+          title: "Evening Plenary",
           track: "all",
-          title: "The Sokovia Accords",
-          essence: "Bringing everyone together to discuss what was created and align on what comes next.",
-          facilitator: "Chair",
-          badge: "Director"
+          status: "scheduled"
         },
         {
           id: "d2-s12",
-          time: "20:15",
+          time: "",
           type: "logistics",
           title: "Gala Preparation",
-          essence: "Suiting up for the flagship black-tie evening."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d2-s13",
-          time: "21:00",
+          time: "",
           type: "party",
-          title: "Gala Night",
-          essence: "Honoring achievements, celebrating our journey, and flagship black-tie evening."
+          title: "Gala Night (LCP 27.28 announcement)",
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d2-s14",
-          time: "23:30",
+          time: "",
           type: "party",
-          title: "The Guardians' Groove",
-          essence: "High-octane after-gala celebration."
+          title: "Party D2 : XXXX",
+          track: "all",
+          status: "scheduled"
         }
       ]
     },
@@ -393,88 +390,79 @@ Avengers, Assemble.`
       tagline: "Whatever it takes — our ultimate legacy",
       themeDesc: "Whatever it takes: individual accountability, collective legacy, and sealing our pledge.",
       accent: "blend",
-      track_split: false,
+      track_split: true,
       sessions: [
         {
           id: "d3-s0",
-          time: "08:15",
+          time: "",
           type: "break",
           title: "Breakfast",
-          essence: "Final morning briefing refuel."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d3-s1",
-          time: "09:30",
+          time: "",
           type: "session",
+          title: "Morning Plenary",
           track: "all",
-          title: "The Final Battle",
-          essence: "The team enters its last major chapter together.",
-          facilitator: "Chair",
-          badge: "Director"
+          status: "scheduled"
         },
         {
           id: "d3-s2",
-          time: "10:30",
+          time: "",
           type: "session",
+          title: "History of AIESEC – The Avengers Legacy",
           track: "all",
-          title: "The Avengers Legacy",
-          essence: "Looking back at where the movement came from and what previous generations built.",
-          facilitator: "Meryem",
-          badge: "S.H.I.E.L.D. Agent"
+          status: "scheduled"
         },
         {
           id: "d3-s3",
-          time: "11:15",
+          time: "",
           type: "break",
           title: "Break",
-          essence: "Plenary regrouping and room transition."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d3-s4",
-          time: "11:45",
+          time: "",
           type: "session",
+          title: "Emotional Intelligence – The BLACK WIDOW Protocol",
           track: "all",
-          title: "Black Widow Protocol",
-          essence: "A reference to emotional awareness, reading people, empathy, and understanding complex situations.",
-          facilitator: "Wadii",
-          badge: "S.H.I.E.L.D. Agent"
+          status: "scheduled"
         },
         {
           id: "d3-s5",
-          time: "12:45",
+          time: "",
           type: "session",
+          title: "The Hierarchy",
           track: "all",
-          title: "The Phoenix Protocol",
-          essence: "Falling, adapting, and coming back stronger.",
-          facilitator: "Soukaina",
-          badge: "S.H.I.E.L.D. Agent"
+          status: "scheduled"
         },
         {
           id: "d3-s6",
-          time: "13:45",
+          time: "",
           type: "session",
+          title: "Individual Spaces – With Great Responsibilities Come Great Power",
           track: "all",
-          title: "With Great Responsibilities Come Great Power",
-          essence: "Moving away from the team and asking: Who am I as an individual?",
-          facilitator: "Oussama",
-          badge: "S.H.I.E.L.D. Agent"
+          status: "scheduled"
         },
         {
           id: "d3-s7",
-          time: "14:45",
+          time: "",
           type: "break",
           title: "Lunch",
-          essence: "Final conference luncheon."
+          track: "all",
+          status: "scheduled"
         },
         {
           id: "d3-s8",
-          time: "15:30",
+          time: "",
           type: "session",
+          title: "Closing Plenary",
           track: "all",
-          title: "The Endgame",
-          essence: "Final reflection, commitments, and closing of the experience.",
-          facilitator: "Chair",
-          badge: "Director"
+          status: "scheduled"
         }
       ]
     }

@@ -17,12 +17,18 @@ export const MyAgendaPage: React.FC = () => {
     for (const day of Object.values(agenda.days) as DaySchedule[]) {
       const daySaved = day.sessions.filter((s) => favorites.includes(s.id));
       if (daySaved.length > 0) {
-        // Sort by effective start time
-        daySaved.sort((a, b) => {
-          const tA = a.adjustedTime || a.time;
-          const tB = b.adjustedTime || b.time;
-          return tA.localeCompare(tB);
-        });
+        // Sort by effective start time if available
+        const hasTimes = daySaved.some((s) => s.adjustedTime || s.time);
+        if (hasTimes) {
+          daySaved.sort((a, b) => {
+            const tA = a.adjustedTime || a.time || '';
+            const tB = b.adjustedTime || b.time || '';
+            if (!tA && !tB) return 0;
+            if (!tA) return 1;
+            if (!tB) return -1;
+            return tA.localeCompare(tB);
+          });
+        }
         result.push({ day, sessions: daySaved });
       }
     }
@@ -39,14 +45,14 @@ export const MyAgendaPage: React.FC = () => {
     for (const { day, sessions } of favoritedByDay) {
       const dateFormatted = day.date.replace(/-/g, '');
       for (const s of sessions) {
-        const start = s.adjustedTime || s.time;
+        const start = s.adjustedTime || s.time || '09:00';
         const [sH, sM] = start.split(':');
-        const startStr = `${dateFormatted}T${sH || '00'}${sM || '00'}00`;
+        const startStr = `${dateFormatted}T${(sH || '09').padStart(2, '0')}${(sM || '00').padStart(2, '0')}00`;
 
         const end = s.adjustedEndTime || s.endTime || '';
         let [eH, eM] = end.split(':');
-        if (!eH) eH = String(parseInt(sH, 10) + 1);
-        const endStr = `${dateFormatted}T${String(eH).padStart(2, '0')}${eM || '00'}00`;
+        if (!eH) eH = String(parseInt(sH || '9', 10) + 1);
+        const endStr = `${dateFormatted}T${String(eH).padStart(2, '0')}${(eM || '00').padStart(2, '0')}00`;
 
         events.push([
           'BEGIN:VEVENT',

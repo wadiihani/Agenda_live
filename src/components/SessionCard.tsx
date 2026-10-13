@@ -80,12 +80,18 @@ export const SessionCard: React.FC<SessionCardProps> = ({
           )}
 
           <div className="flex items-center gap-2 tabular-nums font-mono font-bold text-off-white/90 shrink-0">
-            {isDelayed && (
-              <span className="line-through text-muted-text/60 text-[10px]">
-                {session.time}
-              </span>
+            {effectiveStart ? (
+              <>
+                {isDelayed && (
+                  <span className="line-through text-muted-text/60 text-[10px]">
+                    {session.time}
+                  </span>
+                )}
+                <span className={isDelayed ? 'text-amber-400' : ''}>{effectiveStart}</span>
+              </>
+            ) : (
+              <span className="text-[10px] text-muted-text/60 font-mono">#{index + 1}</span>
             )}
-            <span className={isDelayed ? 'text-amber-400' : ''}>{effectiveStart}</span>
           </div>
 
           <span className="font-medium text-off-white/90 truncate">
@@ -186,23 +192,31 @@ export const SessionCard: React.FC<SessionCardProps> = ({
       <div className="flex items-center justify-between gap-2 mb-2 font-label">
         <div className="flex items-center gap-2">
           {/* Time Marker */}
-          <div className="flex items-center gap-1.5 text-xs font-bold text-off-white tabular-nums">
-            <Clock className="w-3.5 h-3.5 text-endgame-gold shrink-0" />
-            {isDelayed && (
-              <span className="line-through text-muted-text/60 text-[11px] font-normal">
-                {session.time}
+          {effectiveStart ? (
+            <div className="flex items-center gap-1.5 text-xs font-bold text-off-white tabular-nums">
+              <Clock className="w-3.5 h-3.5 text-endgame-gold shrink-0" />
+              {isDelayed && (
+                <span className="line-through text-muted-text/60 text-[11px] font-normal">
+                  {session.time}
+                </span>
+              )}
+              <span className={isDelayed ? 'text-amber-400 font-extrabold' : ''}>
+                {effectiveStart}
+                {effectiveEnd ? ` – ${effectiveEnd}` : ''}
               </span>
-            )}
-            <span className={isDelayed ? 'text-amber-400 font-extrabold' : ''}>
-              {effectiveStart}
-              {effectiveEnd ? ` – ${effectiveEnd}` : ''}
-            </span>
-            {session.duration && (
-              <span className="text-[10px] font-mono text-muted-text/80 px-1.5 py-0.5 rounded bg-white/5 border border-white/5 shrink-0">
-                {typeof session.duration === 'number' ? `${session.duration}m` : session.duration}
+              {session.duration && (
+                <span className="text-[10px] font-mono text-muted-text/80 px-1.5 py-0.5 rounded bg-white/5 border border-white/5 shrink-0">
+                  {typeof session.duration === 'number' ? `${session.duration}m` : session.duration}
+                </span>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 text-xs font-medium text-muted-text tabular-nums">
+              <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 border border-white/8 text-muted-text/90">
+                Session {index + 1}
               </span>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Status Badge */}
           {getStatusBadge()}
@@ -214,12 +228,22 @@ export const SessionCard: React.FC<SessionCardProps> = ({
               className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border ${
                 session.track === 'newbies'
                   ? 'bg-infinity-purple/20 text-purple-300 border-infinity-purple/40'
+                  : session.track === 'igv'
+                  ? 'bg-arc-blue/20 text-arc-blue border-arc-blue/40'
                   : session.track === 'mms'
                   ? 'bg-endgame-gold/20 text-endgame-gold border-endgame-gold/40'
-                  : 'bg-white/10 text-off-white border-white/10'
+                  : 'bg-white/10 text-off-white/80 border-white/10'
               }`}
             >
-              {session.track === 'mms' ? 'MMs & Oldies' : session.track}
+              {session.track === 'newbies'
+                ? 'Newbies'
+                : session.track === 'igv'
+                ? 'iGV Members'
+                : session.track === 'mms'
+                ? 'MMs & Oldies'
+                : session.track === 'all'
+                ? 'All Membership'
+                : session.track}
             </span>
           )}
 

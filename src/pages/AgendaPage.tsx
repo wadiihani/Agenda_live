@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, X, Filter, Star } from 'lucide-react';
-import { DaySchedule, Session } from '../data/agenda';
+import { Search, X, Filter, Star, Info } from 'lucide-react';
+import { DaySchedule, Session, TrackType } from '../data/agenda';
 import { SessionCard } from '../components/SessionCard';
 import { SessionDetailModal } from '../components/SessionDetailModal';
 import { useLiveSession } from '../hooks/useLiveSession';
@@ -15,7 +15,7 @@ export const AgendaPage: React.FC = () => {
   const { agenda, selectedDayId, setSelectedDayId, selectedSession, setSelectedSession, favorites } = useAgenda();
   const { status, current, currentDay } = useLiveSession();
 
-  const [activeTrack, setActiveTrack] = useState<string>('all');
+  const [activeTrack, setActiveTrack] = useState<TrackType>('all');
   const [favoritesOnly, setFavoritesOnly] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -25,6 +25,17 @@ export const AgendaPage: React.FC = () => {
       setSelectedDayId(dayParam);
     }
   }, [dayParam, agenda, setSelectedDayId]);
+
+  // Reset activeTrack to 'all' if track not applicable to current day
+  useEffect(() => {
+    if (selectedDayId === 'day1' && activeTrack !== 'all') {
+      setActiveTrack('all');
+    } else if (selectedDayId === 'day2' && activeTrack === 'mms') {
+      setActiveTrack('all');
+    } else if (selectedDayId === 'day3' && activeTrack === 'igv') {
+      setActiveTrack('all');
+    }
+  }, [selectedDayId, activeTrack]);
 
   // Scroll to session if target sessionParam provided
   useEffect(() => {
@@ -57,11 +68,20 @@ export const AgendaPage: React.FC = () => {
 
   // Filter sessions
   const filteredSessions = useMemo(() => {
-    let list: Session[] = [...(activeDay.sessions || [])].sort((a, b) => {
-      const timeA = a.adjustedTime || a.time;
-      const timeB = b.adjustedTime || b.time;
-      return timeA.localeCompare(timeB);
-    });
+    let list: Session[] = [...(activeDay.sessions || [])];
+
+    // Only sort by time if any sessions have times; otherwise preserve official sequence
+    const hasTimes = list.some((s) => s.adjustedTime || s.time);
+    if (hasTimes) {
+      list.sort((a, b) => {
+        const timeA = a.adjustedTime || a.time || '';
+        const timeB = b.adjustedTime || b.time || '';
+        if (!timeA && !timeB) return 0;
+        if (!timeA) return 1;
+        if (!timeB) return -1;
+        return timeA.localeCompare(timeB);
+      });
+    }
 
     // Favorites only filter
     if (favoritesOnly) {
@@ -71,9 +91,12 @@ export const AgendaPage: React.FC = () => {
     // Track filter
     if (activeTrack !== 'all') {
       list = list.filter((s) => {
-        if (s.type === 'break' || s.type === 'logistics' || s.type === 'party') return true;
-        if (!s.track || s.track === 'all') return true;
-        return s.track === activeTrack;
+        // Specific track session must match activeTrack
+        if (s.track && s.track !== 'all') {
+          return s.track === activeTrack;
+        }
+        // Shared plenary, break, meal, or party session without track restriction
+        return true;
       });
     }
 
@@ -127,6 +150,55 @@ export const AgendaPage: React.FC = () => {
 
   const dayTheme = getDayHeaderTheme(activeDay.dayNumber);
 
+  // Available tracks for current day
+  const currentDayTracks: { id: TrackType; label: string; activeClass: string }[] = useMemo(() => {
+    if (activeDay.dayNumber === 1) {
+      return [
+        {
+          id: 'all',
+          label: 'All Membership',
+          activeClass: 'bg-stark-red/30 text-stark-red border-stark-red/60 shadow-sm'
+        }
+      ];
+    }
+    if (activeDay.dayNumber === 2) {
+      return [
+        {
+          id: 'all',
+          label: 'All Tracks',
+          activeClass: 'bg-white/20 text-white border-white/40 shadow-sm'
+        },
+        {
+          id: 'newbies',
+          label: 'Newbies',
+          activeClass: 'bg-infinity-purple/30 text-purple-300 border-infinity-purple shadow-sm'
+        },
+        {
+          id: 'igv',
+          label: 'iGV Members',
+          activeClass: 'bg-arc-blue/30 text-arc-blue border-arc-blue shadow-sm'
+        }
+      ];
+    }
+    return [
+      {
+        id: 'all',
+        label: 'All Tracks',
+        activeClass: 'bg-white/20 text-white border-white/40 shadow-sm'
+      },
+      {
+        id: 'newbies',
+        label: 'Newbies',
+        activeClass: 'bg-infinity-purple/30 text-purple-300 border-infinity-purple shadow-sm'
+      },
+      {
+        id: 'mms',
+        label: 'MMs & Oldies',
+        activeClass: 'bg-endgame-gold/30 text-endgame-gold border-endgame-gold shadow-sm'
+      }
+    ];
+  }, [activeDay.dayNumber]);
+
   return (
     <div className="space-y-4 pb-20 font-sans">
       {/* Day Overview Tactical Card */}
@@ -171,41 +243,23 @@ export const AgendaPage: React.FC = () => {
       <div className="space-y-2 sticky top-[80px] z-20 bg-[#070A10]/95 backdrop-blur-xl py-2 px-1 border-b border-white/5">
         {/* Track & Favorites Chips */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar font-label pb-1">
-          {/* All chip */}
-          <button
-            onClick={() => setActiveTrack('all')}
-            className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider whitespace-nowrap transition-all border active:scale-95 ${
-              activeTrack === 'all'
-                ? 'bg-white/20 text-white border-white/40 shadow-sm'
-                : 'bg-white/5 text-muted-text hover:text-off-white border-white/8'
-            }`}
-          >
-            All Tracks
-          </button>
-
-          {/* Newbies Track */}
-          <button
-            onClick={() => setActiveTrack('newbies')}
-            className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider whitespace-nowrap transition-all border active:scale-95 ${
-              activeTrack === 'newbies'
-                ? 'bg-infinity-purple/30 text-purple-300 border-infinity-purple shadow-sm'
-                : 'bg-white/5 text-muted-text hover:text-off-white border-white/8'
-            }`}
-          >
-            Newbies
-          </button>
-
-          {/* MMs Track */}
-          <button
-            onClick={() => setActiveTrack('mms')}
-            className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider whitespace-nowrap transition-all border active:scale-95 ${
-              activeTrack === 'mms'
-                ? 'bg-endgame-gold/30 text-endgame-gold border-endgame-gold shadow-sm'
-                : 'bg-white/5 text-muted-text hover:text-off-white border-white/8'
-            }`}
-          >
-            MMs & Oldies
-          </button>
+          {/* Day-specific Track Chips */}
+          {currentDayTracks.map((trk) => {
+            const isActive = activeTrack === trk.id;
+            return (
+              <button
+                key={trk.id}
+                onClick={() => setActiveTrack(trk.id)}
+                className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider whitespace-nowrap transition-all border active:scale-95 ${
+                  isActive
+                    ? trk.activeClass
+                    : 'bg-white/5 text-muted-text hover:text-off-white border-white/8'
+                }`}
+              >
+                {trk.label}
+              </button>
+            );
+          })}
 
           {/* Favorites Filter Chip */}
           <button
@@ -242,7 +296,7 @@ export const AgendaPage: React.FC = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search sessions, topics, rooms, leads..."
+            placeholder="Search sessions, topics, tracks..."
             className="w-full pl-9 pr-8 py-2 rounded-xl bg-surface-card border border-white/10 focus:border-endgame-gold/60 text-xs text-off-white placeholder:text-muted-text/60 outline-none transition-all shadow-sm font-sans"
           />
           {searchQuery && (
@@ -256,6 +310,25 @@ export const AgendaPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Track Status Context Notices */}
+      {activeDay.dayNumber === 2 && activeTrack === 'igv' && (
+        <div className="flex items-start gap-2.5 p-3 rounded-xl bg-arc-blue/10 border border-arc-blue/30 text-xs text-arc-blue font-sans">
+          <Info className="w-4 h-4 shrink-0 mt-0.5 text-arc-blue" />
+          <div>
+            <span className="font-bold">iGV Members Track:</span> Parallel session <strong>The Power of the Pitch</strong> confirmed. Remaining track sessions are unassigned in official schedule and pending confirmation.
+          </div>
+        </div>
+      )}
+
+      {activeDay.dayNumber === 3 && activeTrack === 'mms' && (
+        <div className="flex items-start gap-2.5 p-3 rounded-xl bg-endgame-gold/10 border border-endgame-gold/30 text-xs text-endgame-gold font-sans">
+          <Info className="w-4 h-4 shrink-0 mt-0.5 text-endgame-gold" />
+          <div>
+            <span className="font-bold">MMs & Oldies Track:</span> Shared plenaries and spaces displayed. Specialized parallel sessions for MMs & Oldies are pending official confirmation.
+          </div>
+        </div>
+      )}
 
       {/* SESSIONS TIMELINE */}
       <div className="space-y-2.5 pt-1">

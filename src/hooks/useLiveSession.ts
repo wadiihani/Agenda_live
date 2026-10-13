@@ -25,7 +25,7 @@ export interface LiveSessionState {
   casablancaTimeStr: string;
 }
 
-function timeToSecs(timeStr: string): number {
+function timeToSecs(timeStr?: string): number {
   if (!timeStr) return 0;
   const [h, m] = timeStr.split(':').map(Number);
   return (h || 0) * 3600 + (m || 0) * 60;
@@ -143,12 +143,18 @@ export function useLiveSession(): LiveSessionState {
     }
 
     if (activeDay && activeDay.sessions?.length) {
-      // Sort sessions by effective start time (adjustedTime || time)
-      const sortedSessions = [...activeDay.sessions].sort((a, b) => {
-        const timeA = a.adjustedTime || a.time;
-        const timeB = b.adjustedTime || b.time;
-        return timeA.localeCompare(timeB);
-      });
+      // Sort sessions by effective start time (adjustedTime || time) only if times exist
+      const hasTimes = activeDay.sessions.some((s) => s.adjustedTime || s.time);
+      const sortedSessions = hasTimes
+        ? [...activeDay.sessions].sort((a, b) => {
+            const timeA = a.adjustedTime || a.time || '';
+            const timeB = b.adjustedTime || b.time || '';
+            if (!timeA && !timeB) return 0;
+            if (!timeA) return 1;
+            if (!timeB) return -1;
+            return timeA.localeCompare(timeB);
+          })
+        : [...activeDay.sessions];
 
       let currentSession: Session | null = null;
       let nextSession: Session | null = null;
