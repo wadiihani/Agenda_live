@@ -11,10 +11,19 @@ interface Announcement {
   createdBy: string;
 }
 
+const DISMISSED_KEY = 'rabat_dismissed_announcements';
+
 export const AnnouncementsBanner: React.FC = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  const [dismissed, setDismissed] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem(DISMISSED_KEY);
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
 
   // Fetch announcements periodically
   useEffect(() => {
@@ -149,7 +158,13 @@ export const AnnouncementsBanner: React.FC = () => {
               )}
               <button
                 onClick={() => {
-                  setDismissed((prev) => new Set([...prev, current.id]));
+                  setDismissed((prev) => {
+                    const next = new Set([...prev, current.id]);
+                    try {
+                      localStorage.setItem(DISMISSED_KEY, JSON.stringify(Array.from(next)));
+                    } catch {}
+                    return next;
+                  });
                   if (safeIndex >= visibleAnnouncements.length - 1) {
                     setCurrentIndex(0);
                   }
