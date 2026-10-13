@@ -1,0 +1,15 @@
+{
+  "1": {
+    "name": "Agent Natasha",
+    "department": "",
+    "ip": "1",
+    "registeredAt": "2026-09-28T15:04:30.994Z"
+  },
+  "192.168.1.102": {
+    "name": "Wadii hani",
+    "department": "Eb",
+    "ip": "192.168.1.102",
+    "registeredAt": "2026-09-28T14:41:15.565Z",
+    "updatedAt": "2026-09-28T14:41:15.566Z"
+  }
+}

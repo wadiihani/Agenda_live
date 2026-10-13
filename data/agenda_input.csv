@@ -1,0 +1,6 @@
+# RABAT CO 26.2 — NEW AGENDA INPUT FILE
+# Replace or paste your sessions below or export directly from Excel as CSV.
+# Columns: Day,Date,StartTime,EndTime,Duration,SessionName,SessionType,Responsible,Location,Description,ConcreteObjective,EmotionalObjective,Track
+Day,Date,StartTime,EndTime,Duration,SessionName,SessionType,Responsible,Location,Description,ConcreteObjective,EmotionalObjective,Track
+Day 1,2026-10-16,08:00,17:00,540 min,Check In,logistics,Command Center,Registration Gate • Bifrost Foyer,Arrival, credential verification, mission pack collection, and operative quarter check-in.,Complete operational identity verification & receive security credentials,Welcome and anticipation,all
+Day 1,2026-10-16,17:00,18:30,90 min,Avengers, Assemble!,session,Conference Chair,Plenary Hall • Valhalla Grand Stage,The iconic opening moment where all operatives officially convene under one shield.,Align on conference culture and non-negotiable standards,Excitement, energy, and belonging,all

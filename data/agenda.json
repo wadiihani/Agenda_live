@@ -1,0 +1,561 @@
+{
+  "meta": {
+    "title": "Rabat CO 26.2",
+    "subtitle": "Avengers Assemble",
+    "tagline": "Different powers. Different perspectives. One team. One mission.",
+    "edition": "26.2",
+    "entity": "AIESEC in Rabat",
+    "datesText": "October 16–18, 2026",
+    "timezone": "Africa/Casablanca",
+    "openingDateTime": "2026-10-16T17:00:00",
+    "closingDateTime": "2026-10-18T17:00:00",
+    "mediaDriveUrl": "https://drive.google.com/drive/folders/1rabat-co26-2-vault?usp=sharing",
+    "location": "Rabat, Morocco",
+    "themeStory": "AIESEC Rabat has spent the last six months in its own kind of Civil War. Not because we lacked talented people — but because our strengths weren't always connected by one common mission. Just like the Avengers, we learned that powerful individuals don't automatically make a powerful team.\n\nThis conference is our Endgame moment: not to erase what happened, but to face it — to rebuild trust, reconnect the team, and develop the next generation of Avengers who won't repeat the mistakes of the last one.\n\nDifferent powers. Different perspectives. One team. One mission.\nAvengers, Assemble.",
+    "lastUpdated": "2026-10-12T20:00:00Z",
+    "version": 1
+  },
+  "days": {
+    "day1": {
+      "id": "day1",
+      "dayNumber": 1,
+      "date": "2026-10-16",
+      "dayOfWeek": "Friday",
+      "codename": "Civil War",
+      "pillar": "CONFLICT • CHOICES • LEADERSHIP",
+      "tagline": "Facing the fractures & rebuilding trust",
+      "themeDesc": "Facing the fractures, uncovering lost trust, and discovering what it truly means to assemble.",
+      "accent": "red",
+      "track_split": false,
+      "sessions": [
+        {
+          "id": "d1-s0",
+          "time": "08:00",
+          "endTime": "17:00",
+          "type": "logistics",
+          "title": "Check In",
+          "room": "Registration Gate • Bifrost Foyer",
+          "status": "completed",
+          "essence": "Arrival, credential verification, mission pack collection, and room allotment.",
+          "learningObjectives": [
+            "Complete operational identity verification & receive security credentials",
+            "Collect the official Rabat CO 26.2 tactical mission playbook",
+            "Settle into assigned operative quarters before the grand plenary convening"
+          ]
+        },
+        {
+          "id": "d1-s1",
+          "time": "17:00",
+          "endTime": "18:30",
+          "type": "session",
+          "title": "Avengers, Assemble!",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "The iconic opening moment where all operatives officially convene under one shield.",
+          "facilitator": "Conference Chair",
+          "badge": "Director",
+          "learningObjectives": [
+            "Align on conference culture, non-negotiable standards, and collective ground rules",
+            "Unpack the Avengers narrative arc (Civil War → Infinity War → Endgame)",
+            "Ignite collective motivation and break down inter-departmental barriers"
+          ],
+          "resources": [
+            { "title": "Opening Briefing Deck", "url": "#", "type": "pdf" },
+            { "title": "Avengers Code of Conduct", "url": "#", "type": "doc" }
+          ]
+        },
+        {
+          "id": "d1-s2",
+          "time": "18:30",
+          "endTime": "19:15",
+          "type": "session",
+          "title": "The Avengers Initiative",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Understanding what brought the Avengers together and connecting it to AIESEC's core purpose.",
+          "facilitator": "Wadii",
+          "badge": "S.H.I.E.L.D. Agent",
+          "learningObjectives": [
+            "Understand why individual brilliance is insufficient without aligned purpose",
+            "Trace the historical mandate of AIESEC in Rabat and our duty to youth leadership",
+            "Identify personal superpowers and how they plug into the collective mission"
+          ]
+        },
+        {
+          "id": "d1-s3",
+          "time": "19:15",
+          "endTime": "19:30",
+          "type": "break",
+          "title": "Tactical Coffee Break",
+          "room": "Bifrost Lounge",
+          "status": "scheduled",
+          "essence": "Tactical recharge and plenary hall transition."
+        },
+        {
+          "id": "d1-s4",
+          "time": "19:30",
+          "endTime": "20:15",
+          "type": "session",
+          "title": "The Broken Shield",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Captain America's shield as a symbol of trust, identity, and something that can be damaged and rebuilt.",
+          "facilitator": "Soukaina",
+          "badge": "S.H.I.E.L.D. Agent",
+          "learningObjectives": [
+            "Confront the internal fractures and communication bottlenecks of the last term",
+            "Learn vulnerability-based trust frameworks to speak hard truths constructively",
+            "Commit to a clean slate of accountability across all portfolios"
+          ]
+        },
+        {
+          "id": "d1-s5",
+          "time": "20:15",
+          "endTime": "21:00",
+          "type": "session",
+          "title": "The Captain's Shield",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Leadership, personal responsibility, and stepping forward when the team needs you most.",
+          "facilitator": "Imane",
+          "badge": "S.H.I.E.L.D. Agent",
+          "learningObjectives": [
+            "Recognize moments that require taking ownership without being asked",
+            "Develop resilience under high-pressure delivery and operational stress",
+            "Define your personal leadership anchor for the upcoming semester"
+          ]
+        },
+        {
+          "id": "d1-s6",
+          "time": "21:00",
+          "endTime": "21:45",
+          "type": "break",
+          "title": "Dinner Refuel",
+          "room": "Mess Hall • Asgard Banquet",
+          "status": "scheduled",
+          "essence": "Mess Hall Refuel & Squad Bonding."
+        },
+        {
+          "id": "d1-s7",
+          "time": "21:45",
+          "endTime": "22:45",
+          "type": "session",
+          "title": "Not Every Hero Is an Avenger",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Having powerful individuals does not automatically create a cohesive, synchronized team.",
+          "facilitator": "Oussama",
+          "badge": "S.H.I.E.L.D. Agent",
+          "learningObjectives": [
+            "Differentiate between individual high performers and true team multipliers",
+            "Eliminate ego friction in task delegation and cross-functional handoffs",
+            "Establish feedback loops that preserve psychological safety and high performance"
+          ]
+        },
+        {
+          "id": "d1-s8",
+          "time": "22:45",
+          "endTime": "23:45",
+          "type": "session",
+          "title": "The Battle Debrief",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Reflecting on Day 1 breakthroughs and preparing for the intensive tactical workshops ahead.",
+          "facilitator": "Conference Chair",
+          "badge": "Director",
+          "learningObjectives": [
+            "Consolidate core takeaways from the Civil War thematic arc",
+            "Complete operative daily reflection & sentiment pulse check",
+            "Receive administrative guidelines for Day 2 morning muster"
+          ]
+        },
+        {
+          "id": "d1-s9",
+          "time": "23:45",
+          "endTime": "02:00",
+          "type": "party",
+          "title": "Stark Expo Nights",
+          "room": "Social Arena • Stark Pavilion",
+          "status": "scheduled",
+          "essence": "Unwind, celebrate day one breakthroughs, and bond with your fellow operatives."
+        }
+      ]
+    },
+    "day2": {
+      "id": "day2",
+      "dayNumber": 2,
+      "date": "2026-10-17",
+      "dayOfWeek": "Saturday",
+      "codename": "Infinity War",
+      "pillar": "THREAT • SACRIFICE • UNITY",
+      "tagline": "Mastering specialization & the battle formation",
+      "themeDesc": "Testing our limits, mastering specialized disciplines, and forging an unbreakable battle formation.",
+      "accent": "purple",
+      "track_split": false,
+      "sessions": [
+        {
+          "id": "d2-s0",
+          "time": "08:15",
+          "endTime": "09:30",
+          "type": "break",
+          "title": "Breakfast Refuel",
+          "room": "Mess Hall • Asgard Banquet",
+          "status": "scheduled",
+          "essence": "Fueling up for an intense day of tactical workshops and team challenges."
+        },
+        {
+          "id": "d2-s1",
+          "time": "09:30",
+          "endTime": "10:30",
+          "type": "session",
+          "track": "all",
+          "title": "Rise of the Avengers",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Starting the second chapter with renewed energy and sharpened operational focus.",
+          "facilitator": "Conference Chair",
+          "badge": "Director",
+          "learningObjectives": [
+            "Set the operational tone for Infinity War's high-stakes challenges",
+            "Understand external competitive landscape and youth engagement targets",
+            "Activate high-energy physical and mental engagement"
+          ]
+        },
+        {
+          "id": "d2-s2",
+          "time": "10:30",
+          "endTime": "11:15",
+          "type": "session",
+          "track": "all",
+          "title": "The Ancient One",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Wisdom, mentorship, and helping others see beyond their immediate limitations.",
+          "facilitator": "Imane",
+          "badge": "S.H.I.E.L.D. Agent",
+          "learningObjectives": [
+            "Adopt strategic perspective vs reactive problem-solving",
+            "Leverage alumni wisdom and historical insights to navigate crises",
+            "Master emotional regulation during unexpected conference delays and shifts"
+          ]
+        },
+        {
+          "id": "d2-s3",
+          "time": "11:15",
+          "endTime": "11:30",
+          "type": "break",
+          "title": "Tactical Coffee Break",
+          "room": "Bifrost Lounge",
+          "status": "scheduled",
+          "essence": "Transition to functional spaces."
+        },
+        {
+          "id": "d2-s4",
+          "time": "11:30",
+          "endTime": "12:30",
+          "type": "session",
+          "track": "all",
+          "title": "The Avengers Tower",
+          "room": "Breakout Hub • Avengers Wing",
+          "status": "scheduled",
+          "essence": "Different heroes have different specialties, but they operate from one unified headquarters.",
+          "facilitator": "LCVPs (Soukaina, Wadii, Oussama, Imane)",
+          "badge": "Tower Commander",
+          "learningObjectives": [
+            "Deep dive into functional specialization (oGX, iCX, TM, BD, MKT, F&L)",
+            "Map inter-portfolio SLAs (Service Level Agreements) and customer journeys",
+            "Identify resource bottlenecks and build mutual support agreements"
+          ]
+        },
+        {
+          "id": "d2-s5",
+          "time": "12:30",
+          "endTime": "14:00",
+          "type": "session",
+          "track": "all",
+          "title": "The Battle Formation",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Heroes with different abilities become invincible when synchronized in precise tactical formation.",
+          "facilitator": "Soukaina",
+          "badge": "S.H.I.E.L.D. Agent",
+          "learningObjectives": [
+            "Simulate live recruitment and partner pitch scenarios under time pressure",
+            "Practice rapid cross-functional handoffs between marketing and operations",
+            "Refine real-time feedback protocols during high-speed execution"
+          ]
+        },
+        {
+          "id": "d2-s6",
+          "time": "14:00",
+          "endTime": "15:00",
+          "type": "break",
+          "title": "Squad Luncheon",
+          "room": "Mess Hall • Asgard Banquet",
+          "status": "scheduled",
+          "essence": "Squad recharge and cross-departmental fellowship."
+        },
+        {
+          "id": "d2-s7",
+          "time": "15:00",
+          "endTime": "15:45",
+          "type": "session",
+          "track": "all",
+          "title": "The Multiverse",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Different entities and generations have diverse cultures, values, and ways of succeeding.",
+          "facilitator": "Oussama",
+          "badge": "S.H.I.E.L.D. Agent",
+          "learningObjectives": [
+            "Appreciate diversity of working styles, backgrounds, and motivations",
+            "Learn inclusive leadership tactics to mobilize every cohort member",
+            "Leverage global AIESEC network connections for local Rabat growth"
+          ]
+        },
+        {
+          "id": "d2-s8",
+          "time": "15:45",
+          "endTime": "16:00",
+          "type": "break",
+          "title": "Pre-Hackathon Setup Break",
+          "room": "Bifrost Lounge",
+          "status": "scheduled",
+          "essence": "Pre-hackathon setup and squad assembling."
+        },
+        {
+          "id": "d2-s9",
+          "time": "16:00",
+          "endTime": "18:45",
+          "type": "session",
+          "track": "all",
+          "title": "Stark Industries: Innovation Lab",
+          "room": "Workshop Lab • Stark Tower",
+          "status": "scheduled",
+          "essence": "A high-energy hackathon challenge where cross-functional squads prototype breakthrough campaigns.",
+          "facilitator": "Ops Crew Lead",
+          "badge": "Ops Crew",
+          "learningObjectives": [
+            "Ideate, prototype, and pitch a flagship initiative within 150 minutes",
+            "Apply rapid validation, customer interviewing, and financial viability checks",
+            "Present to a jury of senior advisors and alumni commanders"
+          ]
+        },
+        {
+          "id": "d2-s10",
+          "time": "18:45",
+          "endTime": "19:15",
+          "type": "break",
+          "title": "Dinner Refuel",
+          "room": "Mess Hall • Asgard Banquet",
+          "status": "scheduled",
+          "essence": "Evening refuel before the grand accords and gala."
+        },
+        {
+          "id": "d2-s11",
+          "time": "19:15",
+          "endTime": "20:15",
+          "type": "session",
+          "track": "all",
+          "title": "The Sokovia Accords",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Bringing all operatives together to debate, align, and vote on the binding commitments for the term.",
+          "facilitator": "Conference Chair",
+          "badge": "Director",
+          "learningObjectives": [
+            "Critically evaluate proposed initiatives against strategic objectives",
+            "Consensus-building and formal ratification of squad commitments",
+            "Sign the Rabat CO 26.2 operational charter"
+          ]
+        },
+        {
+          "id": "d2-s12",
+          "time": "20:15",
+          "endTime": "21:00",
+          "type": "logistics",
+          "title": "Gala Suit-Up & Preparation",
+          "room": "Delegation Quarters",
+          "status": "scheduled",
+          "essence": "Suiting up in formal black-tie attire for the flagship evening celebration."
+        },
+        {
+          "id": "d2-s13",
+          "time": "21:00",
+          "endTime": "23:30",
+          "type": "party",
+          "title": "Gala Night: Royal Hall of Asgard",
+          "room": "Grand Ballroom • Royal Palace",
+          "status": "scheduled",
+          "essence": "Honoring achievements, celebrating our journey, and flagship black-tie awards evening."
+        },
+        {
+          "id": "d2-s14",
+          "time": "23:30",
+          "endTime": "02:30",
+          "type": "party",
+          "title": "The Guardians' Groove",
+          "room": "Social Arena • Knowhere Beats",
+          "status": "scheduled",
+          "essence": "High-octane after-gala celebration with live beats and squad fellowship."
+        }
+      ]
+    },
+    "day3": {
+      "id": "day3",
+      "dayNumber": 3,
+      "date": "2026-10-18",
+      "dayOfWeek": "Sunday",
+      "codename": "Endgame",
+      "pillar": "LEGACY • REDEMPTION • THE FINAL STAND",
+      "tagline": "Whatever it takes — our ultimate legacy",
+      "themeDesc": "Whatever it takes: individual accountability, collective legacy, and sealing our pledge.",
+      "accent": "blend",
+      "track_split": false,
+      "sessions": [
+        {
+          "id": "d3-s0",
+          "time": "08:15",
+          "endTime": "09:30",
+          "type": "break",
+          "title": "Breakfast Refuel",
+          "room": "Mess Hall • Asgard Banquet",
+          "status": "scheduled",
+          "essence": "Final morning briefing refuel before the culminating sprint."
+        },
+        {
+          "id": "d3-s1",
+          "time": "09:30",
+          "endTime": "10:30",
+          "type": "session",
+          "track": "all",
+          "title": "The Final Battle",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "The team enters its last major chapter together, resolving all remaining challenges.",
+          "facilitator": "Conference Chair",
+          "badge": "Director",
+          "learningObjectives": [
+            "Mobilize physical and emotional energy after an intensive weekend",
+            "Synthesize all learnings into an actionable operational roadmap",
+            "Address lingering hesitations and build 100% squad conviction"
+          ]
+        },
+        {
+          "id": "d3-s2",
+          "time": "10:30",
+          "endTime": "11:15",
+          "type": "session",
+          "track": "all",
+          "title": "The Avengers Legacy",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Looking back at where the movement originated and what previous generations built for us.",
+          "facilitator": "Imane",
+          "badge": "S.H.I.E.L.D. Agent",
+          "learningObjectives": [
+            "Appreciate the heritage of AIESEC in Rabat since inception",
+            "Recognize our custodial responsibility to leave the entity stronger than we found it",
+            "Draft personal legacy statements as future leaders"
+          ]
+        },
+        {
+          "id": "d3-s3",
+          "time": "11:15",
+          "endTime": "11:45",
+          "type": "break",
+          "title": "Tactical Transition Break",
+          "room": "Bifrost Lounge",
+          "status": "scheduled",
+          "essence": "Plenary regrouping and room transition."
+        },
+        {
+          "id": "d3-s4",
+          "time": "11:45",
+          "endTime": "12:45",
+          "type": "session",
+          "track": "all",
+          "title": "Black Widow Protocol",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Emotional intelligence, active listening, deep empathy, and navigating nuanced human dynamics.",
+          "facilitator": "Wadii",
+          "badge": "S.H.I.E.L.D. Agent",
+          "learningObjectives": [
+            "Develop situational awareness when managing team burnout and morale drops",
+            "Master non-violent communication during high-pressure deadlines",
+            "Build authentic interpersonal connections that outlast the conference"
+          ]
+        },
+        {
+          "id": "d3-s5",
+          "time": "12:45",
+          "endTime": "13:45",
+          "type": "session",
+          "track": "all",
+          "title": "The Phoenix Protocol",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Rising from operational setbacks, adapting to sudden market shifts, and emerging stronger.",
+          "facilitator": "Soukaina",
+          "badge": "S.H.I.E.L.D. Agent",
+          "learningObjectives": [
+            "Reframe operational failure as an essential prerequisite for innovation",
+            "Build an individual and collective contingency protocol for crisis periods",
+            "Cultivate grit and mental fortitude in leadership"
+          ]
+        },
+        {
+          "id": "d3-s6",
+          "time": "13:45",
+          "endTime": "14:45",
+          "type": "session",
+          "track": "all",
+          "title": "With Great Power Comes Great Responsibility",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Stepping back from the collective squad and asking: Who am I as an individual changemaker?",
+          "facilitator": "Oussama",
+          "badge": "S.H.I.E.L.D. Agent",
+          "learningObjectives": [
+            "Define your personal leadership values and ethical boundaries",
+            "Commit to a concrete 90-day action plan following the conference",
+            "Align personal leadership development with societal impact in Morocco"
+          ]
+        },
+        {
+          "id": "d3-s7",
+          "time": "14:45",
+          "endTime": "15:30",
+          "type": "break",
+          "title": "Final Conference Luncheon",
+          "room": "Mess Hall • Asgard Banquet",
+          "status": "scheduled",
+          "essence": "Final conference luncheon and fellowship."
+        },
+        {
+          "id": "d3-s8",
+          "time": "15:30",
+          "endTime": "17:00",
+          "type": "session",
+          "track": "all",
+          "title": "The Endgame: Whatever It Takes",
+          "room": "Plenary Hall • Valhalla Grand Stage",
+          "status": "scheduled",
+          "essence": "Final reflection, ceremonial pledge, and official closing of the Rabat CO 26.2 experience.",
+          "facilitator": "Conference Chair",
+          "badge": "Director",
+          "learningObjectives": [
+            "Formally seal and pledge the Rabat CO 26.2 Declaration",
+            "Recognize outstanding organizing committee and operative achievements",
+            "Convene the final delegation circle: Whatever It Takes"
+          ],
+          "resources": [
+            { "title": "Official Endgame Declaration", "url": "#", "type": "pdf" },
+            { "title": "Next Steps 90-Day Tracker", "url": "#", "type": "sheet" }
+          ]
+        }
+      ]
+    }
+  }
+}

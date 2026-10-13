@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080B12" />
+      <stop offset="50%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#050810" />
+    </linearGradient>
+    <linearGradient id="goldGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3C4" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#997A15" />
+    </linearGradient>
+    <linearGradient id="redGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5252" />
+      <stop offset="100%" stop-color="#B71C1C" />
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad512)" />
+  <rect x="6" y="6" width="500" height="500" rx="108" fill="none" stroke="url(#goldGrad512)" stroke-width="6" opacity="0.6" />
+
+  <circle cx="256" cy="256" r="170" fill="none" stroke="#D4AF37" stroke-width="3" stroke-dasharray="10 16" opacity="0.35" />
+  <circle cx="256" cy="256" r="202" fill="none" stroke="#B71C1C" stroke-width="2.5" stroke-dasharray="6 20" opacity="0.4" />
+
+  <path d="M256 75 L378 405 H304 L274 320 H238 L208 405 H134 Z M256 181 L245 277 H267 Z" fill="url(#goldGrad512)" filter="drop-shadow(0px 8px 24px rgba(212,175,55,0.45))" />
+  
+  <path d="M192 288 L395 288 L363 325 L261 325 Z" fill="url(#redGrad512)" opacity="0.9" />
+
+  <polygon points="256,42 264,64 286,67 270,83 275,104 256,91 237,104 242,83 226,67 248,64" fill="#D4AF37" />
+</svg>

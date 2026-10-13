@@ -1,0 +1,158 @@
+{
+  "meta": {
+    "title": "Rabat CO 26.2",
+    "subtitle": "Avengers Assemble",
+    "tagline": "Different powers. Different perspectives. One team. One mission.",
+    "edition": "26.2",
+    "entity": "AIESEC in Rabat",
+    "datesText": "October 16–18, 2026",
+    "timezone": "Africa/Casablanca",
+    "openingDateTime": "2026-10-16T17:00:00",
+    "closingDateTime": "2026-10-18T17:00:00",
+    "mediaDriveUrl": "https://drive.google.com/drive/folders/1rabat-co26-2-vault?usp=sharing",
+    "location": "Rabat, Morocco"
+  },
+  "days": {
+    "day1": {
+      "id": "day1",
+      "dayNumber": 1,
+      "date": "2026-10-16",
+      "dayOfWeek": "Friday",
+      "codename": "Civil War",
+      "pillar": "CONFLICT • CHOICES • LEADERSHIP",
+      "tagline": "Facing the fractures & rebuilding trust",
+      "accent": "red",
+      "sessions": [
+        {
+          "id": "d1-s0",
+          "time": "08:00",
+          "endTime": "17:00",
+          "duration": "540 min",
+          "type": "logistics",
+          "title": "Check In",
+          "location": "Registration Gate • Bifrost Foyer",
+          "responsible": "Command Center",
+          "description": "Arrival, credential verification, mission pack collection, and operative quarter check-in.",
+          "concreteObjective": "Complete operational identity verification & receive security credentials",
+          "emotionalObjective": "Welcome and anticipation",
+          "track": "all",
+          "status": "scheduled"
+        },
+        {
+          "id": "d1-s1",
+          "time": "17:00",
+          "endTime": "18:30",
+          "duration": "90 min",
+          "type": "session",
+          "title": "Avengers, Assemble!",
+          "location": "Plenary Hall • Valhalla Grand Stage",
+          "responsible": "Conference Chair",
+          "description": "The iconic opening moment where all operatives officially convene under one shield.",
+          "concreteObjective": "Align on conference culture and non-negotiable standards",
+          "emotionalObjective": "Excitement, energy, and belonging",
+          "track": "all",
+          "status": "scheduled"
+        },
+        {
+          "id": "d1-s2",
+          "time": "18:30",
+          "endTime": "19:15",
+          "duration": "45 min",
+          "type": "session",
+          "title": "AIESEC 101 – The Avengers Initiative",
+          "location": "Plenary Hall • Valhalla Grand Stage",
+          "responsible": "Wadii",
+          "description": "Foundational briefing unpacking organizational purpose and strategic roadmap.",
+          "concreteObjective": "Understand AIESEC purpose and leadership development model",
+          "emotionalObjective": "Curiosity, discovery, and pride",
+          "track": "all",
+          "status": "scheduled"
+        }
+      ]
+    },
+    "day2": {
+      "id": "day2",
+      "dayNumber": 2,
+      "date": "2026-10-17",
+      "dayOfWeek": "Saturday",
+      "codename": "Infinity War",
+      "pillar": "EXECUTION • CRISIS • RESILIENCE",
+      "tagline": "Facing the pressure & standing together",
+      "accent": "purple",
+      "sessions": [
+        {
+          "id": "d2-s1",
+          "time": "09:00",
+          "endTime": "09:45",
+          "duration": "45 min",
+          "type": "session",
+          "title": "Morning Plenary – Rise of the Avengers",
+          "location": "Plenary Hall • Valhalla Grand Stage",
+          "responsible": "Conference Chair",
+          "description": "Morning keynote re-grounding operatives in the conference mission.",
+          "concreteObjective": "Set high operational tone and clarify priorities",
+          "emotionalObjective": "Optimism, clarity, and determination",
+          "track": "all",
+          "status": "scheduled"
+        },
+        {
+          "id": "d2-s2",
+          "time": "10:30",
+          "endTime": "11:45",
+          "duration": "75 min",
+          "type": "session",
+          "title": "Functional Spaces – The Avengers Tower",
+          "location": "Operational Breakout Rooms",
+          "responsible": "LCVPs (Soukaina, Wadii, Oussama, Imane)",
+          "description": "Specialized functional tracks across all portfolios.",
+          "concreteObjective": "Master departmental execution strategies and customer journeys",
+          "emotionalObjective": "Professional mastery and belonging",
+          "track": "all",
+          "status": "scheduled"
+        }
+      ]
+    },
+    "day3": {
+      "id": "day3",
+      "dayNumber": 3,
+      "date": "2026-10-18",
+      "dayOfWeek": "Sunday",
+      "codename": "Endgame",
+      "pillar": "SACRIFICE • REBUILDING • VICTORY",
+      "tagline": "Whatever it takes — our defining moment",
+      "accent": "blend",
+      "sessions": [
+        {
+          "id": "d3-s1",
+          "time": "09:15",
+          "endTime": "10:00",
+          "duration": "45 min",
+          "type": "session",
+          "title": "Morning Plenary – The Final Battle",
+          "location": "Plenary Hall • Valhalla Grand Stage",
+          "responsible": "Conference Chair",
+          "description": "Morning opening framing the transition from learning to action.",
+          "concreteObjective": "Translate insight into measurable post-conference execution",
+          "emotionalObjective": "Urgency, courage, and collective momentum",
+          "track": "all",
+          "status": "scheduled"
+        },
+        {
+          "id": "d3-s2",
+          "time": "13:45",
+          "endTime": "15:30",
+          "duration": "105 min",
+          "type": "session",
+          "title": "Closing – The Endgame",
+          "location": "Plenary Hall • Valhalla Grand Stage",
+          "responsible": "Conference Chair",
+          "description": "The grand emotional finale, leadership pass-on, and assembly pledge.",
+          "concreteObjective": "Commit to post-conference impact and local committee victory",
+          "emotionalObjective": "Transcendence, emotional climax, and eternal unity",
+          "track": "all",
+          "status": "scheduled"
+        }
+      ]
+    }
+  }
+}

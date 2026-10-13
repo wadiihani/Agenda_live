@@ -1,0 +1,8 @@
+{
+  "googleSheetWebhookUrl": "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnSTMh5cd6iWnGFBPEIYIXMzRYXEzR018Ee7SAcFq4LDGtkUKgcSlgudhsXmd-ADFGjx1LqGPhFGmid6ectcCbcgiRDQuuLo0t4-3zBv1ZFwBGX-n3GxpV9lFtgTVr2NO4nlxGo95jDeG1XKWAf9euHaHCgky53RZzVMFGuiiSlKLObVVMedxNK4wMUJXVjfroX6nobqSD-Pnf2NtahhSiJCiJXIs89PKvWSv7KxeMqN_4OKSDvZRhSBnRJf-B-LytlpwsIUPIeAmECKf1eMVvGp45V-Pg&lib=M9GmipJtgN01bxPBa0CghdbLwsRAv2sKW",
+  "formsStatus": {
+    "day1": true,
+    "day2": false,
+    "day3": false
+  }
+}

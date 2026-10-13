@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080B12" />
+      <stop offset="50%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#050810" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3C4" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#997A15" />
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5252" />
+      <stop offset="100%" stop-color="#B71C1C" />
+    </linearGradient>
+  </defs>
+
+  <!-- Base Square with rounded corners -->
+  <rect width="192" height="192" rx="42" fill="url(#bgGrad)" />
+  <rect x="2" y="2" width="188" height="188" rx="40" fill="none" stroke="url(#goldGrad)" stroke-width="2.5" opacity="0.6" />
+
+  <!-- Asgardian Geometric Radial Circles -->
+  <circle cx="96" cy="96" r="64" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.35" />
+  <circle cx="96" cy="96" r="76" fill="none" stroke="#B71C1C" stroke-width="1" stroke-dasharray="2 8" opacity="0.4" />
+
+  <!-- The Avengers 'A' Stylized Emblem -->
+  <path d="M96 28 L142 152 H114 L103 120 H89 L78 152 H50 Z M96 68 L92 104 H100 Z" fill="url(#goldGrad)" filter="drop-shadow(0px 4px 12px rgba(212,175,55,0.4))" />
+  
+  <!-- Right Arrow Accent across the crossbar -->
+  <path d="M72 108 L148 108 L136 122 L98 122 Z" fill="url(#redGrad)" opacity="0.9" />
+
+  <!-- Star of Asgard Center Beacon -->
+  <polygon points="96,16 99,24 107,25 101,31 103,39 96,34 89,39 91,31 85,25 93,24" fill="#D4AF37" />
+</svg>
