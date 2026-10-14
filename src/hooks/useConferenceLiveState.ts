@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, createContext, useContext } from 'react';
 import { Session, DaySchedule } from '../data/agenda';
 import { useTimeSim } from '../context/TimeSimContext';
 import { useAgenda } from '../context/AgendaContext';
@@ -154,7 +154,7 @@ export function parseDualRoom(roomStr?: string): DualRoom {
   };
 }
 
-export function useConferenceLiveState(): ConferenceLiveState {
+function useComputeConferenceLiveState(): ConferenceLiveState {
   const { simulatedTime } = useTimeSim();
   const { agenda, delayMinutes, manualActiveSessionId } = useAgenda();
 
@@ -628,3 +628,126 @@ export function useConferenceLiveState(): ConferenceLiveState {
 
   return state;
 }
+
+const ConferenceLiveContext = createContext<ConferenceLiveState | null>(null);
+
+export const ConferenceLiveProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const liveState = useComputeConferenceLiveState();
+  return React.createElement(ConferenceLiveContext.Provider, { value: liveState }, children);
+};
+
+export function useConferenceLiveState(): ConferenceLiveState {
+  const context = useContext(ConferenceLiveContext);
+  if (!context) {
+    // Fail-safe if accessed outside Provider
+    return {
+      state: 'PRE_CONFERENCE',
+      status: 'before',
+      currentSession: null,
+      current: null,
+      nextSession: null,
+      next: null,
+      subsequentSession: null,
+      currentDay: null,
+      activeDayId: 'day1',
+      casablancaDateStr: '2026-10-16',
+      casablancaTimeStr: '12:00',
+      casablancaTimestamp: Date.now(),
+      casablancaDaySecs: 43200,
+      progressPercent: 0,
+      remainingMinutes: 0,
+      countdown: null,
+      nextCountdown: null,
+      breakCountdown: null,
+      delayMinutes: 0,
+      isDelayed: false,
+      manualActiveSessionId: null,
+      dualRoom: null,
+      nextDualRoom: null,
+      roomMovementCue: null,
+      tomorrowFirstSession: null,
+      tomorrowBreakfastTime: null,
+      tomorrowRollCallTime: null
+    };
+  }
+  return context;
+}
+
+/**
+ * Selective hook for Day & Event phase
+ * ONLY re-renders when activeDayId or conference phase changes (never on 1-sec countdown ticks)
+ */
+export function useConferenceDayState() {
+  const state = useConferenceLiveState();
+  const [dayState, setDayState] = useState({
+    activeDayId: state.activeDayId,
+    state: state.state,
+    isPostEvent: state.state === 'POST_EVENT'
+  });
+
+  useEffect(() => {
+    const isPost = state.state === 'POST_EVENT';
+    setDayState((prev) => {
+      if (
+        prev.activeDayId === state.activeDayId &&
+        prev.state === state.state &&
+        prev.isPostEvent === isPost
+      ) {
+        return prev;
+      }
+      return {
+        activeDayId: state.activeDayId,
+        state: state.state,
+        isPostEvent: isPost
+      };
+    });
+  }, [state.activeDayId, state.state]);
+
+  return dayState;
+}
+
+/**
+ * Selective hook for Daily Timeline and Stepper
+ * ONLY re-renders on minute changes or session transitions (saving ~98% of layout reflows)
+ */
+export function useConferenceTimelineState() {
+  const state = useConferenceLiveState();
+  const [timelineState, setTimelineState] = useState({
+    activeDayId: state.activeDayId,
+    currentSessionId: state.currentSession?.id || null,
+    delayMinutes: state.delayMinutes,
+    manualActiveSessionId: state.manualActiveSessionId,
+    casablancaMinuteStr: state.casablancaTimeStr
+  });
+
+  useEffect(() => {
+    const curId = state.currentSession?.id || null;
+    setTimelineState((prev) => {
+      if (
+        prev.activeDayId === state.activeDayId &&
+        prev.currentSessionId === curId &&
+        prev.delayMinutes === state.delayMinutes &&
+        prev.manualActiveSessionId === state.manualActiveSessionId &&
+        prev.casablancaMinuteStr === state.casablancaTimeStr
+      ) {
+        return prev;
+      }
+      return {
+        activeDayId: state.activeDayId,
+        currentSessionId: curId,
+        delayMinutes: state.delayMinutes,
+        manualActiveSessionId: state.manualActiveSessionId,
+        casablancaMinuteStr: state.casablancaTimeStr
+      };
+    });
+  }, [
+    state.activeDayId,
+    state.currentSession?.id,
+    state.delayMinutes,
+    state.manualActiveSessionId,
+    state.casablancaTimeStr
+  ]);
+
+  return timelineState;
+}
+

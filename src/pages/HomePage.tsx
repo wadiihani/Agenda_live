@@ -9,25 +9,25 @@ import { InlineDailyTimeline } from '../components/InlineDailyTimeline';
 import { SessionDetailModal } from '../components/SessionDetailModal';
 import { Session } from '../data/agenda';
 import { useAgenda } from '../context/AgendaContext';
-import { useConferenceLiveState } from '../hooks/useConferenceLiveState';
+import { useConferenceDayState } from '../hooks/useConferenceLiveState';
 
 export const HomePage: React.FC = () => {
   const [activeModalSession, setActiveModalSession] = useState<Session | null>(null);
   const { agenda, selectedDayId, setSelectedDayId } = useAgenda();
-  const liveState = useConferenceLiveState();
+  const { activeDayId, isPostEvent } = useConferenceDayState();
   const driveUrl = agenda?.meta?.mediaDriveUrl || 'https://drive.google.com/drive/folders/1rabat-co26-2-vault?usp=sharing';
 
   // Auto-select active conference day by default (Requirement 4)
   const [timelineDayId, setTimelineDayId] = useState<string>(() => {
-    return liveState.activeDayId || selectedDayId || 'day1';
+    return activeDayId || selectedDayId || 'day1';
   });
 
   // Sync timelineDayId when conference day changes (e.g. simulated time travels across days)
   useEffect(() => {
-    if (liveState.activeDayId) {
-      setTimelineDayId(liveState.activeDayId);
+    if (activeDayId) {
+      setTimelineDayId(activeDayId);
     }
-  }, [liveState.activeDayId]);
+  }, [activeDayId]);
 
   const handleSelectDayTab = (dayId: string) => {
     setTimelineDayId(dayId);
@@ -36,9 +36,9 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="relative flex-1 flex flex-col justify-start items-center w-full min-h-[calc(100dvh-5rem)] select-none space-y-3.5 sm:space-y-4">
-      {/* Cinematic Road to Endgame Ambient Glow Mesh */}
+      {/* Cinematic Road to Endgame Ambient Glow Mesh (GPU optimized) */}
       <div 
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[540px] h-[340px] sm:h-[540px] bg-gradient-to-tr from-stark-red/15 via-infinity-purple/15 to-endgame-gold/15 rounded-full blur-[100px] pointer-events-none -z-10" 
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[500px] h-[340px] sm:h-[500px] bg-gradient-to-tr from-stark-red/12 via-infinity-purple/10 to-endgame-gold/10 rounded-full blur-3xl pointer-events-none -z-10" 
         aria-hidden="true" 
       />
 
@@ -82,9 +82,9 @@ export const HomePage: React.FC = () => {
           <span className="text-[11px] font-mono uppercase tracking-widest text-muted-text font-bold">
             CONFERENCE TIMELINE
           </span>
-          {timelineDayId !== liveState.activeDayId && (
+          {timelineDayId !== activeDayId && (
             <button
-              onClick={() => handleSelectDayTab(liveState.activeDayId)}
+              onClick={() => handleSelectDayTab(activeDayId)}
               className="text-[10px] font-mono text-endgame-gold hover:underline flex items-center gap-1"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
@@ -111,7 +111,7 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* 6. PHOTO & VIDEO MEDIA VAULT (Repositioned BELOW Timeline per Requirement 5) */}
-      {liveState.state !== 'POST_EVENT' && (
+      {!isPostEvent && (
         <div className="w-full max-w-xl mx-auto p-3.5 sm:p-4 rounded-2xl glass-card border border-endgame-gold/30 bg-gradient-to-r from-endgame-gold/10 via-black/40 to-cosmic-blue/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 rounded-xl bg-endgame-gold/20 border border-endgame-gold/40 flex items-center justify-center shrink-0">

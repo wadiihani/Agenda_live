@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
 import { 
   MapPin, 
   User, 
@@ -13,7 +12,7 @@ import {
 } from 'lucide-react';
 import { Session, DaySchedule, formatSessionTitle } from '../data/agenda';
 import { useAgenda } from '../context/AgendaContext';
-import { useConferenceLiveState, parseDualRoom } from '../hooks/useConferenceLiveState';
+import { useConferenceTimelineState, parseDualRoom } from '../hooks/useConferenceLiveState';
 
 interface InlineDailyTimelineProps {
   dayId: string;
@@ -22,8 +21,7 @@ interface InlineDailyTimelineProps {
 
 export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId, onSelectSession }) => {
   const { agenda, favorites, toggleFavorite, isFavorite } = useAgenda();
-  const liveState = useConferenceLiveState();
-  const { currentSession, activeDayId, delayMinutes } = liveState;
+  const { currentSessionId, activeDayId, delayMinutes, manualActiveSessionId, casablancaMinuteStr } = useConferenceTimelineState();
 
   const [activeTrack, setActiveTrack] = useState<string>('all');
   const [filterSavedOnly, setFilterSavedOnly] = useState(false);
@@ -98,14 +96,14 @@ export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId,
 
   // Determine if a session is currently live
   const isSessionLive = (s: Session): boolean => {
-    if (liveState.manualActiveSessionId) {
-      return liveState.manualActiveSessionId === s.id;
+    if (manualActiveSessionId) {
+      return manualActiveSessionId === s.id;
     }
     if (activeDayId !== dayId) return false;
-    return currentSession?.id === s.id;
+    return currentSessionId === s.id;
   };
 
-  // Determine if session is completed
+  // Determine if session is completed (minute-level precision to eliminate continuous rerenders)
   const isSessionCompleted = (s: Session): boolean => {
     if (s.status === 'completed') return true;
     if (activeDayId !== dayId) {
@@ -119,7 +117,9 @@ export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId,
     if (!endStr) return false;
     const [h, m] = endStr.split(':').map(Number);
     const endSecs = (h || 0) * 3600 + (m || 0) * 60 + (delayMinutes || 0) * 60;
-    return liveState.casablancaDaySecs >= endSecs;
+    const [curH, curM] = (casablancaMinuteStr || '00:00').split(':').map(Number);
+    const curSecs = (curH || 0) * 3600 + (curM || 0) * 60;
+    return curSecs >= endSecs;
   };
 
   // Group parallel sessions by start time
@@ -158,22 +158,12 @@ export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId,
     return groups;
   }, [selectedDay, activeTrack, filterSavedOnly, favorites]);
 
-  // Jump to active session helper
+  // Jump to active session helper (manual only on user tap)
   const handleJumpToNow = () => {
     if (activeSessionRef.current) {
       activeSessionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };
-
-  // Auto-scroll on mount if active session is in current view
-  useEffect(() => {
-    if (activeDayId === dayId && currentSession && activeSessionRef.current) {
-      const timer = setTimeout(() => {
-        activeSessionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 350);
-      return () => clearTimeout(timer);
-    }
-  }, [dayId, activeDayId, currentSession]);
 
   return (
     <div className="w-full space-y-3 font-sans select-none">
@@ -220,7 +210,7 @@ export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId,
         </div>
 
         {/* Jump to Now Chip if viewing active day and live session underway */}
-        {activeDayId === dayId && currentSession && (
+        {activeDayId === dayId && currentSessionId && (
           <button
             onClick={handleJumpToNow}
             className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold uppercase tracking-wider transition-all active:scale-95"
@@ -313,10 +303,9 @@ export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId,
                   // 2. ACTIVE LIVE SESSION CARD (Accent-highlighted card with 'Jump to Now' chip)
                   if (isLive) {
                     return (
-                      <motion.div
+                      <div
                         key={session.id}
                         ref={activeSessionRef}
-                        layoutId={`live-timeline-card-${session.id}`}
                         onClick={() => onSelectSession(session)}
                         className={`p-3.5 sm:p-4 rounded-2xl glass-card border ${theme.bgActive} cursor-pointer transition-all active:scale-[0.99] relative overflow-hidden group`}
                       >
@@ -380,7 +369,7 @@ export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId,
                             <span>Shifted +{session.delayMinutes}m from planned start</span>
                           </div>
                         )}
-                      </motion.div>
+                      </div>
                     );
                   }
 

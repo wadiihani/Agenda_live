@@ -9,6 +9,7 @@ import { AnnouncementsBanner } from './components/AnnouncementsBanner';
 import { MemberProvider } from './context/MemberContext';
 import { AdminProvider } from './context/AdminContext';
 import { AgendaProvider } from './context/AgendaContext';
+import { ConferenceLiveProvider } from './hooks/useConferenceLiveState';
 import { HomePage } from './pages/HomePage';
 import { AgendaPage } from './pages/AgendaPage';
 import { MyAgendaPage } from './pages/MyAgendaPage';
@@ -38,7 +39,8 @@ export const App: React.FC = () => {
     <AdminProvider>
       <MemberProvider>
         <AgendaProvider>
-          <div className="relative min-h-[100dvh] flex flex-col bg-background text-off-white selection:bg-stark-red/40 selection:text-white overflow-x-hidden font-sans">
+          <ConferenceLiveProvider>
+            <div className="relative min-h-[100dvh] flex flex-col bg-background text-off-white selection:bg-stark-red/40 selection:text-white overflow-x-hidden font-sans">
             {/* Subtle pure-CSS animated aurora gradient mesh */}
             <AuroraBackground />
 
@@ -103,7 +105,8 @@ export const App: React.FC = () => {
               </div>
             </footer>
           </div>
-        </AgendaProvider>
+        </ConferenceLiveProvider>
+      </AgendaProvider>
       </MemberProvider>
     </AdminProvider>
   );
