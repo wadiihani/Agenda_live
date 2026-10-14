@@ -1,13 +1,14 @@
-// Rabat CO 26.2 Service Worker (PWA Offline Companion)
-const CACHE_NAME_STATIC = 'rabat-static-v2';
-const CACHE_NAME_DATA = 'rabat-data-v2';
+// ASGARD'CO 26 Service Worker (PWA Offline Companion)
+const CACHE_NAME_STATIC = 'asgard-static-v3';
+const CACHE_NAME_DATA = 'asgard-data-v3';
 
 const STATIC_SHELL_ASSETS = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
-  '/icon-192.svg',
-  '/icon-512.svg'
+  '/asgard-logo.png',
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {

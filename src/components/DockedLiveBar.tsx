@@ -49,7 +49,7 @@ export const DockedLiveBar: React.FC = () => {
             <>
               <span className="w-1.5 h-1.5 rounded-full bg-endgame-gold shrink-0" />
               <span className="text-xs text-muted-text font-medium truncate">
-                Rabat CO 26.2 · Oct 16–18, 2026
+                ASGARD'CO 26 · Oct 16–18, 2026
               </span>
             </>
           )}

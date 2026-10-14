@@ -21,7 +21,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker
       .register('/sw.js')
       .then((reg) => {
-        console.log('Rabat CO 26.2 ServiceWorker registered:', reg.scope);
+        console.log('ASGARD\'CO 26 ServiceWorker registered:', reg.scope);
       })
       .catch((err) => {
         console.warn('ServiceWorker registration error:', err);

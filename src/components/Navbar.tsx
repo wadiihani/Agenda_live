@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, Zap, Sparkles } from 'lucide-react';
+import { Zap, Sparkles } from 'lucide-react';
 import { useTimeSim } from '../context/TimeSimContext';
 import { useLiveSession } from '../hooks/useLiveSession';
 import { useAdmin } from '../context/AdminContext';
@@ -39,22 +39,18 @@ export const Navbar: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Brand Link */}
         <Link to="/" className="flex items-center gap-3 group">
-          <div className={`w-9 h-9 rounded-xl p-0.5 shadow-glow-combo transition-transform group-hover:scale-105 ${
-            isAdmin ? 'bg-gradient-to-br from-endgame-gold to-marvel-red' : 'bg-gradient-to-br from-marvel-red to-infinity-purple'
-          }`}>
-            <div className="w-full h-full bg-[#0E0E17] rounded-[10px] flex items-center justify-center">
-              <Shield className={`w-5 h-5 ${isAdmin ? 'text-endgame-gold' : 'text-off-white'}`} />
-            </div>
+          <div className="w-9 h-9 rounded-xl p-0.5 shadow-glow-combo transition-transform group-hover:scale-105 bg-white/[0.06] border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+            <img src="/asgard-logo.png" alt="ASGARD'CO 26" className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]" />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5 font-display font-extrabold text-lg leading-tight tracking-wider text-off-white">
-              <span>RABAT CO</span>
+              <span>ASGARD'CO</span>
               <span className={`text-xs px-1.5 py-0.5 rounded-full font-sans font-bold border ${
                 isAdmin 
                   ? 'bg-endgame-gold/20 text-endgame-gold border-endgame-gold/40' 
-                  : 'bg-marvel-red/20 text-marvel-red border-marvel-red/40'
+                  : 'bg-endgame-gold/20 text-endgame-gold border-endgame-gold/40'
               }`}>
-                26.2
+                26
               </span>
             </div>
             <span className="text-[10px] tracking-widest text-muted-text font-semibold uppercase">

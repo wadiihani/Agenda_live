@@ -3,7 +3,6 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { 
   Radio, 
   Calendar, 
-  Star, 
   Bell, 
   MoreHorizontal, 
   Camera, 
@@ -15,12 +14,10 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdmin } from '../context/AdminContext';
-import { useAgenda } from '../context/AgendaContext';
 
 export const BottomNav: React.FC = () => {
   const [showMore, setShowMore] = useState(false);
   const { isAdmin, logoutAdmin } = useAdmin();
-  const { favorites } = useAgenda();
   const location = useLocation();
 
   // Announcement unread counter
@@ -47,27 +44,21 @@ export const BottomNav: React.FC = () => {
     return () => clearInterval(interval);
   }, [location.pathname]);
 
-  // 4 Primary destinations per Master Prompt Section 5 E:
+  // Primary navigation destinations
   const primaryNavItems = [
     { to: '/', label: 'Live', icon: Radio, exact: true },
     { to: '/agenda', label: 'Agenda', icon: Calendar },
-    { 
-      to: '/my-agenda', 
-      label: 'My Agenda', 
-      icon: Star, 
-      badge: favorites.length > 0 ? favorites.length : null 
-    },
     { 
       to: '/updates', 
       label: 'Updates', 
       icon: Bell, 
       badge: unreadAnnouncements > 0 ? unreadAnnouncements : null 
     },
+    { to: '/photos', label: 'Photos', icon: Camera },
   ];
 
   const moreMenuItems = [
     { to: '/feedback', label: 'Debrief Forms', icon: MessageSquareHeart },
-    { to: '/photos', label: 'Photo Wall', icon: Camera },
     { to: '/attendees', label: 'Delegation Directory', icon: Users },
     { to: '/team', label: 'S.H.I.E.L.D. Committee', icon: Shield },
   ];
@@ -116,7 +107,7 @@ export const BottomNav: React.FC = () => {
               <span className="text-[10px] font-mono tracking-widest text-muted-text uppercase font-bold">
                 TACTICAL SPACES
               </span>
-              <span className="text-[10px] text-endgame-gold font-mono">Rabat CO 26.2</span>
+              <span className="text-[10px] text-endgame-gold font-mono font-bold">ASGARD'CO 26</span>
             </div>
 
             <div className="p-1 space-y-0.5">

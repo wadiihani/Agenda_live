@@ -125,22 +125,25 @@ export const StickyHeader: React.FC = () => {
       <header className="sticky top-0 z-30 w-full bg-[#070A10]/95 backdrop-blur-xl border-b border-white/8 transition-all">
         <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2.5">
           <div className="flex items-center justify-between gap-2">
-            {/* Brand Visual Mark & Single Concise Date String (Requirement 6) */}
+            {/* Brand Visual Mark & Single Concise Date String */}
             <button
               onClick={() => navigate('/')}
               className="flex items-center gap-2 group text-left transition-transform active:scale-95"
-              aria-label="Rabat CO 26.2 Home"
+              aria-label="ASGARD'CO 26 Home"
             >
-              {/* Avengers Geometric Crest */}
-              <div className="relative w-7 h-7 rounded-lg bg-gradient-to-br from-stark-red/25 via-infinity-purple/20 to-endgame-gold/30 border border-endgame-gold/40 flex items-center justify-center shadow-[0_0_12px_rgba(212,175,55,0.2)]">
-                <span className="font-display font-black text-xs text-endgame-gold tracking-tighter">A</span>
-                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-stark-red border border-[#070A10]" />
+              {/* Asgard'CO 26 Official Logo */}
+              <div className="relative w-8 h-8 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center p-0.5 shadow-[0_0_12px_rgba(212,175,55,0.25)] group-hover:border-endgame-gold/50 transition-all overflow-hidden shrink-0">
+                <img
+                  src="/asgard-logo.png"
+                  alt="ASGARD'CO 26 Logo"
+                  className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
+                />
               </div>
 
               <div>
                 <div className="flex items-center gap-1.5 leading-none">
                   <span className="font-display font-extrabold text-sm sm:text-base tracking-wider text-off-white uppercase">
-                    RABAT CO 26.2
+                    ASGARD'CO 26
                   </span>
                   <span className="text-[10px] text-muted-text/80 font-mono tracking-tight hidden sm:inline">
                     • Oct 16–18, 2026
@@ -176,8 +179,8 @@ export const StickyHeader: React.FC = () => {
                 <button
                   onClick={handleInstallClick}
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-endgame-gold/40 text-[10px] font-label font-semibold text-off-white transition-all active:scale-95"
-                  title="Install Rabat CO App on your phone"
-                  aria-label="Install Rabat CO App"
+                  title="Install ASGARD'CO 26 App on your phone"
+                  aria-label="Install ASGARD'CO 26 App"
                 >
                   <Download className="w-3 h-3 text-endgame-gold" />
                   <span className="hidden xs:inline">Install</span>
@@ -207,7 +210,7 @@ export const StickyHeader: React.FC = () => {
             </div>
 
             <p className="text-xs text-muted-text mb-4 leading-relaxed">
-              Install <strong>Rabat CO 26.2</strong> on your device for instant offline access and real-time live agenda tracking during the conference.
+              Install <strong>ASGARD'CO 26</strong> on your device for instant offline access and real-time live agenda tracking during the conference.
             </p>
 
             {isIOS ? (

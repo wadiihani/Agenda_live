@@ -60,7 +60,7 @@ export const MyAgendaPage: React.FC = () => {
           `DTSTAMP:${dateFormatted}T000000Z`,
           `DTSTART;TZID=Africa/Casablanca:${startStr}`,
           `DTEND;TZID=Africa/Casablanca:${endStr}`,
-          `SUMMARY:[Rabat CO 26.2] ${s.title}`,
+          `SUMMARY:[ASGARD'CO 26] ${s.title}`,
           `DESCRIPTION:${s.essence || ''}\\nFacilitator: ${s.facilitator || ''}\\nRoom: ${s.room || 'Plenary'}`,
           `LOCATION:${s.room || 'Conference Center'}, Rabat, Morocco`,
           'STATUS:CONFIRMED',
@@ -82,7 +82,7 @@ export const MyAgendaPage: React.FC = () => {
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
-    link.setAttribute('download', 'Rabat-CO-26-2-My-Itinerary.ics');
+    link.setAttribute('download', 'Asgard-CO-26-My-Itinerary.ics');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -106,7 +106,7 @@ export const MyAgendaPage: React.FC = () => {
               My Saved Sessions
             </h2>
             <p className="text-xs text-muted-text mt-0.5">
-              {favorites.length} session{favorites.length === 1 ? '' : 's'} bookmarked across Rabat CO 26.2.
+              {favorites.length} session{favorites.length === 1 ? '' : 's'} bookmarked across ASGARD'CO 26.
             </p>
           </div>
 

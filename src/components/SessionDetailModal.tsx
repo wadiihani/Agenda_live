@@ -71,18 +71,18 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
     if (!endH) endH = String(parseInt(startH || '9', 10) + 1);
     const endStr = `${dateFormatted}T${String(endH).padStart(2, '0')}${(endM || '00').padStart(2, '0')}00`;
 
-    const title = `[Rabat CO 26.2] ${session.title}`;
+    const title = `[ASGARD'CO 26] ${session.title}`;
     const description = `${session.essence || ''}\\nFacilitator: ${session.facilitator || 'AIESEC in Rabat'}\\nRoom: ${session.room || 'Plenary'}`;
     const location = `${session.room || 'Conference Center'}, Rabat, Morocco`;
 
     const icsContent = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//AIESEC in Rabat//Rabat CO 26.2//EN',
+      'PRODID:-//AIESEC in Rabat//ASGARD\'CO 26//EN',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
       'BEGIN:VEVENT',
-      `UID:${session.id}-rabatco@aiesec.org`,
+      `UID:${session.id}-asgardco@aiesec.org`,
       `DTSTAMP:${dateFormatted}T000000Z`,
       `DTSTART;TZID=Africa/Casablanca:${startStr}`,
       `DTEND;TZID=Africa/Casablanca:${endStr}`,
@@ -107,7 +107,7 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `Rabat CO 26.2: ${session.title}`,
+          title: `ASGARD'CO 26: ${session.title}`,
           text: `${session.title} at ${effectiveStart} (${session.room || 'Plenary'})`,
           url: window.location.href
         });
@@ -206,7 +206,7 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
                     ? 'bg-endgame-gold text-[#070A10] border-endgame-gold shadow-[0_0_14px_rgba(212,175,55,0.6)]'
                     : 'bg-white/5 text-muted-text hover:text-endgame-gold border-white/10 hover:border-white/20'
                 }`}
-                title={favorited ? 'Remove from My Agenda' : 'Save to My Agenda'}
+                title={favorited ? 'Remove saved session' : 'Save session'}
                 aria-label="Toggle favorite"
               >
                 <Star className={`w-4 h-4 ${favorited ? 'fill-current' : ''}`} />

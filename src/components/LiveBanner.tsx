@@ -120,7 +120,7 @@ export const LiveBanner: React.FC<LiveBannerProps> = ({ onSelectSession }) => {
             Countdown to Assembling
           </h3>
           <p className="text-xs text-muted-text mt-0.5">
-            Rabat CO 26.2 convenes Friday, October 16 at 17:00 in Africa/Casablanca.
+            ASGARD'CO 26 convenes Friday, October 16 at 17:00 in Africa/Casablanca.
           </p>
 
           {/* High-Impact Tabular Countdown Numbers */}
@@ -353,7 +353,7 @@ export const LiveBanner: React.FC<LiveBannerProps> = ({ onSelectSession }) => {
           Mission Accomplished — Avengers Assemble
         </h3>
         <p className="text-xs sm:text-sm text-muted-text max-w-md mx-auto mt-1.5 leading-relaxed font-sans">
-          "Whatever it took." All 3 chapters of Rabat CO 26.2 are concluded. Upload your plenary memories, gala night snapshots, and committee moments into the official Google Drive vault.
+          "Whatever it took." All 3 chapters of ASGARD'CO 26 are concluded. Upload your plenary memories, gala night snapshots, and committee moments into the official Google Drive vault.
         </p>
 
         {/* CTAs */}

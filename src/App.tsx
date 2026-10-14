@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AuroraBackground } from './components/AuroraBackground';
 import { StickyHeader } from './components/StickyHeader';
 import { BottomNav } from './components/BottomNav';
@@ -12,7 +12,6 @@ import { AgendaProvider } from './context/AgendaContext';
 import { ConferenceLiveProvider } from './hooks/useConferenceLiveState';
 import { HomePage } from './pages/HomePage';
 import { AgendaPage } from './pages/AgendaPage';
-import { MyAgendaPage } from './pages/MyAgendaPage';
 import { UpdatesPage } from './pages/UpdatesPage';
 import { TeamPage } from './pages/TeamPage';
 import { FeedbackPage } from './pages/FeedbackPage';
@@ -63,8 +62,8 @@ export const App: React.FC = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/live" element={<HomePage />} />
                 <Route path="/agenda" element={<AgendaPage />} />
-                <Route path="/my-agenda" element={<MyAgendaPage />} />
-                <Route path="/saved" element={<MyAgendaPage />} />
+                <Route path="/my-agenda" element={<Navigate to="/agenda" replace />} />
+                <Route path="/saved" element={<Navigate to="/agenda" replace />} />
                 <Route path="/updates" element={<UpdatesPage />} />
                 <Route path="/announcements" element={<UpdatesPage />} />
                 <Route path="/feedback" element={<FeedbackPage />} />
@@ -92,9 +91,10 @@ export const App: React.FC = () => {
 
             {/* Desktop Static Footer */}
             <footer className="relative z-10 border-t border-white/5 py-6 text-center text-xs text-muted-text hidden md:block">
-              <div className="max-w-3xl mx-auto px-4 font-label">
+              <div className="max-w-3xl mx-auto px-4 font-label flex flex-col items-center">
+                <img src="/asgard-logo.png" alt="ASGARD'CO 26" className="w-8 h-8 object-contain mb-2 filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]" />
                 <p className="font-display font-bold tracking-wider text-off-white/90 uppercase text-sm">
-                  AIESEC IN RABAT · RABAT CO 26.2
+                  AIESEC IN RABAT · ASGARD'CO 26
                 </p>
                 <p className="mt-1 text-[11px] text-muted-text/80">
                   October 16–18, 2026 · Rabat, Morocco

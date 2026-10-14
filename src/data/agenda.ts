@@ -131,7 +131,7 @@ export function formatSessionTitle(title: string): string {
 
 export const AGENDA_DATA: ConferenceAgenda = {
   meta: {
-    title: "Rabat CO 26.2",
+    title: "ASGARD'CO 26",
     subtitle: "Avengers Assemble",
     tagline: "Different powers. Different perspectives. One team. One mission.",
     edition: "26.2",

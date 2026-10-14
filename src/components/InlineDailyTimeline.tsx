@@ -330,7 +330,7 @@ export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId,
                               toggleFavorite(session.id);
                             }}
                             className="p-1 rounded-full hover:bg-white/10 transition-colors"
-                            aria-label={favorited ? 'Remove from My Agenda' : 'Save to My Agenda'}
+                            aria-label={favorited ? 'Remove saved session' : 'Save session'}
                           >
                             <Star className={`w-4 h-4 ${favorited ? 'fill-endgame-gold text-endgame-gold' : 'text-muted-text'}`} />
                           </button>
@@ -411,8 +411,8 @@ export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId,
                               toggleFavorite(session.id);
                             }}
                             className="p-1 rounded-full hover:bg-white/10 transition-colors"
-                            title={favorited ? 'Remove from My Agenda' : 'Save to My Agenda'}
-                            aria-label={favorited ? 'Remove from My Agenda' : 'Save to My Agenda'}
+                            title={favorited ? 'Remove saved session' : 'Save session'}
+                            aria-label={favorited ? 'Remove saved session' : 'Save session'}
                           >
                             <Star className={`w-4 h-4 ${favorited ? 'fill-endgame-gold text-endgame-gold' : 'text-muted-text hover:text-off-white'}`} />
                           </button>

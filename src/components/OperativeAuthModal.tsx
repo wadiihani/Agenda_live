@@ -86,7 +86,7 @@ export const OperativeAuthModal: React.FC = () => {
           </div>
 
           <p className="text-xs text-muted-text mb-4 leading-relaxed font-sans">
-            Identify yourself to unlock daily mission debriefs, submit session and food ratings, and connect your phone to Rabat CO 26.2.
+            Identify yourself to unlock daily mission debriefs, submit session and food ratings, and connect your phone to ASGARD'CO 26.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-3.5 font-label">

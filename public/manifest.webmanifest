@@ -1,7 +1,7 @@
 {
-  "name": "Rabat CO 26.2 — Avengers Live Agenda",
-  "short_name": "Rabat CO 26.2",
-  "description": "Official Live Conference Agenda and Companion for Rabat CO 26.2 (October 9–11, 2026) by AIESEC in Rabat.",
+  "name": "ASGARD'CO 26 — Avengers Live Conference",
+  "short_name": "ASGARD'CO 26",
+  "description": "Official Live Conference Agenda and Companion for ASGARD'CO 26 (October 16–18, 2026) by AIESEC in Rabat.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -10,15 +10,15 @@
   "scope": "/",
   "icons": [
     {
-      "src": "/icon-192.svg",
+      "src": "/icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.svg",
+      "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],

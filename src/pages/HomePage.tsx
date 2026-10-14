@@ -42,14 +42,26 @@ export const HomePage: React.FC = () => {
         aria-hidden="true" 
       />
 
-      {/* 1. CINEMATIC BRAND HERO (Clean & Non-Repetitive per Requirement 6) */}
-      <div className="w-full text-center pt-0.5 pb-0.5">
+      {/* 1. CINEMATIC BRAND HERO (Clean & Official Asgard'CO 26 Logo) */}
+      <div className="w-full text-center pt-1 pb-1">
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.35 }}
           className="flex flex-col items-center justify-center"
         >
+          {/* Official ASGARD'CO 26 Emblem */}
+          <div className="relative mb-2">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 relative flex items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-tr from-stark-red/25 via-infinity-purple/20 to-endgame-gold/30 rounded-2xl blur-xl -z-10 animate-pulse" />
+              <img
+                src="/asgard-logo.png"
+                alt="ASGARD'CO 26 Official Logo"
+                className="w-full h-full object-contain filter drop-shadow-[0_8px_20px_rgba(0,0,0,0.7)]"
+              />
+            </div>
+          </div>
+
           <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/[0.04] border border-white/10 mb-1 font-label">
             <span className="w-1.5 h-1.5 rounded-full bg-stark-red animate-pulse" />
             <span className="text-[10px] font-mono uppercase tracking-widest text-off-white/90 font-bold">
@@ -59,11 +71,11 @@ export const HomePage: React.FC = () => {
           </div>
           <div className="mt-0.5">
             <h1 className="font-display font-black text-3xl sm:text-5xl tracking-tight leading-[0.9] text-metallic-gold filter drop-shadow-[0_8px_24px_rgba(0,0,0,0.85)]">
-              AVENGERS ASSEMBLE
+              ASGARD'CO 26
             </h1>
           </div>
           <p className="text-[11px] sm:text-xs text-muted-text/85 font-sans mt-1 max-w-sm mx-auto leading-tight">
-            Different powers. Different perspectives. One team. One mission.
+            Avengers Assemble · AIESEC in Rabat
           </p>
         </motion.div>
       </div>

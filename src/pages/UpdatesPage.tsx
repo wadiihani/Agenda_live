@@ -93,9 +93,9 @@ export const UpdatesPage: React.FC = () => {
       const permission = await Notification.requestPermission();
       setNotificationPermission(permission);
       if (permission === 'granted') {
-        new Notification('Rabat CO 26.2 Notifications Active', {
+        new Notification('ASGARD\'CO 26 Notifications Active', {
           body: 'You will receive real-time alerts for session delays and room reassignments.',
-          icon: '/favicon.ico'
+          icon: '/asgard-logo.png'
         });
       }
     } catch (e) {
@@ -208,7 +208,7 @@ export const UpdatesPage: React.FC = () => {
                 Enable Instant Conference Notifications
               </h4>
               <p className="text-xs text-muted-text mt-0.5 max-w-md leading-relaxed">
-                Receive vibration alerts when sessions shift or rooms change during Rabat CO 26.2. On iOS, install to Home Screen first.
+                Receive vibration alerts when sessions shift or rooms change during ASGARD'CO 26. On iOS, install to Home Screen first.
               </p>
             </div>
           </div>

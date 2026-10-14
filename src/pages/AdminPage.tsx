@@ -416,7 +416,7 @@ export const AdminPage: React.FC = () => {
   } finally { lock.releaseLock(); }
 }
 function doGet(e) {
-  return ContentService.createTextOutput(JSON.stringify({status:'online', message:'Rabat CO 26.2 Webhook is active'})).setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify({status:'online', message:'ASGARD\'CO 26 Webhook is active'})).setMimeType(ContentService.MimeType.JSON);
 }`;
 
   const copyScriptToClipboard = () => {
@@ -966,7 +966,7 @@ function doGet(e) {
               </button>
             </div>
             <ol className="list-decimal pl-4 space-y-1.5">
-              <li>Open your Google Sheet (e.g. <em>"Rabat CO 26.2 Debriefs"</em>).</li>
+              <li>Open your Google Sheet (e.g. <em>"ASGARD'CO 26 Debriefs"</em>).</li>
               <li>Go to <strong>Extensions → Apps Script</strong> in the top Google menu.</li>
               <li>Delete all existing code, click <strong>"Copy Script Code"</strong> above, and paste it into the editor.</li>
               <li>Click <strong>Save</strong> (Ctrl+S).</li>
