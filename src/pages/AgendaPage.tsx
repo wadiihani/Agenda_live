@@ -4,11 +4,12 @@ import { Search, X, Filter, Star, Info } from 'lucide-react';
 import { DaySchedule, Session, TrackType } from '../data/agenda';
 import { SessionCard } from '../components/SessionCard';
 import { SessionDetailModal } from '../components/SessionDetailModal';
+import { DayTabs } from '../components/DayTabs';
 import { useLiveSession } from '../hooks/useLiveSession';
 import { useAgenda } from '../context/AgendaContext';
 
 export const AgendaPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const dayParam = searchParams.get('day');
   const sessionParam = searchParams.get('session');
 
@@ -201,6 +202,18 @@ export const AgendaPage: React.FC = () => {
 
   return (
     <div className="space-y-4 pb-20 font-sans">
+      {/* 3-Day Selector Tabs */}
+      {agenda?.days && (
+        <DayTabs
+          days={agenda.days}
+          activeDayId={selectedDayId}
+          onSelectDay={(id) => {
+            setSelectedDayId(id);
+            setSearchParams({ day: id });
+          }}
+        />
+      )}
+
       {/* Day Overview Tactical Card */}
       <div className="rounded-2xl glass-card p-4 sm:p-5 border border-white/10 relative overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-2 font-label">

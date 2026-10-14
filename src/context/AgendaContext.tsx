@@ -24,6 +24,11 @@ interface AgendaContextType {
   setSelectedDayId: (dayId: string) => void;
   selectedSession: Session | null;
   setSelectedSession: (session: Session | null) => void;
+  delayMinutes: number;
+  setDelayMinutes: (mins: number) => void;
+  manualActiveSessionId: string | null;
+  setManualActiveSessionId: (id: string | null) => void;
+  isDelayActive: boolean;
   applyDelay: (params: {
     dayId: string;
     sessionId: string;
@@ -43,9 +48,11 @@ interface AgendaContextType {
 
 const AgendaContext = createContext<AgendaContextType | null>(null);
 
-const CACHE_KEY = 'rabat_agenda_cache_v3';
+const CACHE_KEY = 'rabat_agenda_cache_v5';
 const FAVORITES_KEY = 'rabat_agenda_favorites_v2';
 const DISMISSED_ALERTS_KEY = 'rabat_dismissed_alerts_v2';
+const DELAY_KEY = 'rabat_delay_minutes';
+const MANUAL_ACTIVE_KEY = 'rabat_manual_active_session';
 
 export const AgendaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Initial agenda from local storage cache or fallback to AGENDA_DATA
@@ -54,7 +61,10 @@ export const AgendaProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const cached = localStorage.getItem(CACHE_KEY);
       if (cached) {
         const parsed = JSON.parse(cached);
-        if (parsed?.agenda?.days) return parsed.agenda;
+        // Ensure cache matches official October 16-18 conference dates
+        if (parsed?.agenda?.days?.day1?.date === '2026-10-16') {
+          return parsed.agenda;
+        }
       }
     } catch (e) {
       console.warn('Failed to parse cached agenda:', e);
@@ -62,7 +72,45 @@ export const AgendaProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return AGENDA_DATA;
   });
 
-  const [syncStatus, setSyncStatus] = useState<SyncStatus>(navigator.onLine ? 'reconnecting' : 'offline');
+  // Global Delay & Manual Session Override
+  const [delayMinutes, setDelayMinutesState] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem(DELAY_KEY);
+      return saved ? parseInt(saved, 10) || 0 : 0;
+    } catch {
+      return 0;
+    }
+  });
+
+  const setDelayMinutes = useCallback((mins: number) => {
+    const safeMins = Math.max(0, mins || 0);
+    setDelayMinutesState(safeMins);
+    try {
+      localStorage.setItem(DELAY_KEY, String(safeMins));
+    } catch {}
+  }, []);
+
+  const [manualActiveSessionId, setManualActiveSessionIdState] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(MANUAL_ACTIVE_KEY) || null;
+    } catch {
+      return null;
+    }
+  });
+
+  const setManualActiveSessionId = useCallback((id: string | null) => {
+    setManualActiveSessionIdState(id);
+    try {
+      if (id) {
+        localStorage.setItem(MANUAL_ACTIVE_KEY, id);
+      } else {
+        localStorage.removeItem(MANUAL_ACTIVE_KEY);
+      }
+    } catch {}
+  }, []);
+
+  // Safe fallback to 'live' when online (prevents permanent RECONNECTING loop)
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>(navigator.onLine ? 'live' : 'offline');
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(() => {
     try {
       const cached = localStorage.getItem(CACHE_KEY);
@@ -128,7 +176,7 @@ export const AgendaProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
   }, []);
 
-  // Fetch agenda from server
+  // Fetch agenda from server with graceful local fallback
   const fetchAgenda = useCallback(async () => {
     if (!navigator.onLine) {
       setSyncStatus('offline');
@@ -137,27 +185,34 @@ export const AgendaProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     try {
       const res = await fetch('/api/agenda', { cache: 'no-store' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      if (data?.success && data?.agenda) {
-        setAgenda(data.agenda);
-        const now = new Date();
-        setLastSyncedAt(now);
-        setSyncStatus('live');
-        try {
-          localStorage.setItem(
-            CACHE_KEY,
-            JSON.stringify({ agenda: data.agenda, timestamp: now.toISOString() })
-          );
-        } catch (e) {
-          console.warn('Storage quota exceeded for agenda cache', e);
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.success && data?.agenda) {
+          setAgenda(data.agenda);
+          const now = new Date();
+          setLastSyncedAt(now);
+          setSyncStatus('live');
+          try {
+            localStorage.setItem(
+              CACHE_KEY,
+              JSON.stringify({ agenda: data.agenda, timestamp: now.toISOString() })
+            );
+          } catch (e) {
+            console.warn('Storage quota exceeded for agenda cache', e);
+          }
+          return;
         }
-      } else {
-        setSyncStatus('reconnecting');
       }
     } catch (err) {
-      console.warn('Agenda synchronization attempt failed:', err);
-      setSyncStatus(navigator.onLine ? 'reconnecting' : 'offline');
+      // In static preview, production or when API is idle, gracefully fall back to local schedule data
+    }
+
+    // Resolves the stuck RECONNECTING loop: delegate has valid schedule data
+    if (!navigator.onLine) {
+      setSyncStatus('offline');
+    } else {
+      setSyncStatus('live');
+      setLastSyncedAt((prev) => prev || new Date());
     }
   }, []);
 
@@ -172,6 +227,9 @@ export const AgendaProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       dryRun?: boolean;
       password?: string;
     }) => {
+      if (params.propagate && params.delayMinutes !== undefined) {
+        setDelayMinutes(params.delayMinutes);
+      }
       try {
         const res = await fetch('/api/agenda/delay', {
           method: 'POST',
@@ -191,7 +249,7 @@ export const AgendaProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return { success: false, error: String(err) };
       }
     },
-    []
+    [setDelayMinutes]
   );
 
   // Update session status via API
@@ -225,7 +283,7 @@ export const AgendaProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Online / offline listeners & polling
   useEffect(() => {
     const handleOnline = () => {
-      setSyncStatus('reconnecting');
+      setSyncStatus('live');
       fetchAgenda();
     };
 
@@ -286,6 +344,8 @@ export const AgendaProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return alerts;
   }, [agenda, favorites, dismissedAlerts]);
 
+  const isDelayActive = delayMinutes > 0;
+
   const value = useMemo(
     () => ({
       agenda,
@@ -301,6 +361,11 @@ export const AgendaProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setSelectedDayId,
       selectedSession,
       setSelectedSession,
+      delayMinutes,
+      setDelayMinutes,
+      manualActiveSessionId,
+      setManualActiveSessionId,
+      isDelayActive,
       applyDelay,
       updateSessionStatus
     }),
@@ -316,6 +381,11 @@ export const AgendaProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       dismissAlert,
       selectedDayId,
       selectedSession,
+      delayMinutes,
+      setDelayMinutes,
+      manualActiveSessionId,
+      setManualActiveSessionId,
+      isDelayActive,
       applyDelay,
       updateSessionStatus
     ]

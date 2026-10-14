@@ -1,32 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { RefreshCw, WifiOff, Zap, Download } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { RefreshCw, WifiOff, Zap, Download, X, Share, PlusSquare } from 'lucide-react';
 import { useAgenda } from '../context/AgendaContext';
 import { useTimeSim } from '../context/TimeSimContext';
 
 export const StickyHeader: React.FC = () => {
-  const { agenda, syncStatus, lastSyncedAt, syncNow, selectedDayId, setSelectedDayId } = useAgenda();
+  const { syncStatus, lastSyncedAt, syncNow, delayMinutes, isDelayActive } = useAgenda();
   const { setIsSimModalOpen, simulatedTime } = useTimeSim();
-  const location = useLocation();
   const navigate = useNavigate();
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
+  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
 
-  // Listen for PWA beforeinstallprompt event
+  // Platform detection
+  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+
   useEffect(() => {
+    const handleOnlineStatus = () => setIsOnline(navigator.onLine);
+    window.addEventListener('online', handleOnlineStatus);
+    window.addEventListener('offline', handleOnlineStatus);
+
+    // Standalone display mode check
+    if (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true
+    ) {
+      setIsInstalled(true);
+    }
+
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled(true);
-    }
 
     return () => {
+      window.removeEventListener('online', handleOnlineStatus);
+      window.removeEventListener('offline', handleOnlineStatus);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
     };
   }, []);
@@ -40,7 +54,7 @@ export const StickyHeader: React.FC = () => {
       }
       setDeferredPrompt(null);
     } else {
-      alert('To install Rabat CO 26.2:\n• On iOS Safari: Tap Share → Add to Home Screen\n• On Android Chrome: Tap Menu (⋮) → Install app');
+      setShowInstallGuide(true);
     }
   };
 
@@ -50,155 +64,203 @@ export const StickyHeader: React.FC = () => {
     setTimeout(() => setIsRefreshing(false), 600);
   };
 
-  const handleDayClick = (dayId: string) => {
-    setSelectedDayId(dayId);
-    // If not on agenda or home, navigate to agenda with selected day
-    if (location.pathname !== '/agenda' && location.pathname !== '/') {
-      navigate(`/agenda?day=${dayId}`);
-    } else if (location.pathname === '/agenda') {
-      navigate(`/agenda?day=${dayId}`, { replace: true });
-    }
-  };
-
   const formatLastSync = (date: Date | null) => {
     if (!date) return 'Cached';
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 
+  // 3 Confidence Badge States per requirement 2:
+  // 1. OFFLINE • CACHED (when !navigator.onLine)
+  // 2. LIVE • +[X]M DELAY (when schedule offset active)
+  // 3. LIVE • ON TIME (when synced & on schedule)
+  const renderConfidenceBadge = () => {
+    if (!isOnline || syncStatus === 'offline') {
+      return (
+        <button
+          onClick={handleManualSync}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider transition-all border active:scale-95 bg-red-950/60 text-red-300 border-red-500/40"
+          title={`Status: OFFLINE • CACHED (Last seen: ${formatLastSync(lastSyncedAt)}). Tap to retry connection.`}
+          aria-label="Offline Mode. Schedule served from local cache. Tap to retry connection."
+        >
+          <WifiOff className="w-3 h-3 text-red-400" />
+          <span>OFFLINE • CACHED</span>
+        </button>
+      );
+    }
+
+    if (isDelayActive && delayMinutes > 0) {
+      return (
+        <button
+          onClick={handleManualSync}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-bold tracking-wider transition-all border active:scale-95 bg-amber-950/70 text-amber-300 border-amber-500/50 shadow-[0_0_12px_rgba(245,158,11,0.2)]"
+          title={`Status: LIVE • +${delayMinutes}M DELAY (Synced: ${formatLastSync(lastSyncedAt)}). Tap to refresh schedule.`}
+          aria-label={`Live schedule active with +${delayMinutes} minutes delay offset. Tap to sync.`}
+        >
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <span className="tabular-nums">LIVE • +{delayMinutes}M DELAY</span>
+          {isRefreshing && <RefreshCw className="w-3 h-3 text-amber-300 animate-spin ml-0.5" />}
+        </button>
+      );
+    }
+
+    return (
+      <button
+        onClick={handleManualSync}
+        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider transition-all border active:scale-95 bg-emerald-950/60 text-emerald-400 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.15)]"
+        title={`Status: LIVE • ON TIME (Synced: ${formatLastSync(lastSyncedAt)}). Tap to sync schedule.`}
+        aria-label="Live connection synced and on time. Tap to sync schedule now."
+      >
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+        </span>
+        <span className="whitespace-nowrap font-bold">LIVE • ON TIME</span>
+        {isRefreshing && <RefreshCw className="w-3 h-3 text-emerald-400 animate-spin ml-0.5" />}
+      </button>
+    );
+  };
+
   return (
-    <header className="sticky top-0 z-30 w-full bg-[#070A10]/95 backdrop-blur-xl border-b border-white/8 transition-all">
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 pt-2.5 pb-2">
-        {/* Top Tier: Brand Identity + Live Connection Badge + Utility Buttons */}
-        <div className="flex items-center justify-between gap-2">
-          {/* Brand Visual Mark */}
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 group text-left transition-transform active:scale-95"
-            aria-label="Go to Home"
-          >
-            {/* Asgardian & Avengers Geometric Crest */}
-            <div className="relative w-7 h-7 rounded-lg bg-gradient-to-br from-stark-red/25 via-infinity-purple/20 to-endgame-gold/30 border border-endgame-gold/40 flex items-center justify-center shadow-[0_0_12px_rgba(212,175,55,0.2)]">
-              <span className="font-display font-black text-xs text-endgame-gold tracking-tighter">A</span>
-              <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-stark-red border border-[#070A10]" />
-            </div>
-
-            <div>
-              <div className="flex items-center gap-1.5 leading-none">
-                <span className="font-display font-extrabold text-sm sm:text-base tracking-wider text-off-white uppercase">
-                  RABAT CO 26.2
-                </span>
-                <span className="text-[10px] font-mono text-endgame-gold px-1 py-0.2 rounded bg-endgame-gold/10 border border-endgame-gold/25 font-bold hidden xs:inline">
-                  LIVE
-                </span>
-              </div>
-              <div className="text-[10px] text-muted-text/80 font-label tracking-wider flex items-center gap-1 mt-0.5">
-                <span>{agenda?.meta?.datesText?.replace('October ', 'Oct ') || 'Oct 16–18'}</span>
-                <span>•</span>
-                <span className="text-off-white/70">AIESEC in Rabat</span>
-              </div>
-            </div>
-          </button>
-
-          {/* Right Action Cluster */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            {/* Truthful Connection & Sync Badge */}
+    <>
+      <header className="sticky top-0 z-30 w-full bg-[#070A10]/95 backdrop-blur-xl border-b border-white/8 transition-all">
+        <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2.5">
+          <div className="flex items-center justify-between gap-2">
+            {/* Brand Visual Mark & Single Concise Date String (Requirement 6) */}
             <button
-              onClick={handleManualSync}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider transition-all border active:scale-95 ${
-                syncStatus === 'live'
-                  ? 'bg-emerald-950/60 text-emerald-400 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.15)]'
-                  : syncStatus === 'reconnecting'
-                  ? 'bg-amber-950/60 text-amber-300 border-amber-500/40 animate-pulse'
-                  : 'bg-red-950/60 text-red-300 border-red-500/40'
-              }`}
-              title={`Status: ${syncStatus.toUpperCase()} (Synced: ${formatLastSync(lastSyncedAt)}). Tap to sync now.`}
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 group text-left transition-transform active:scale-95"
+              aria-label="Rabat CO 26.2 Home"
             >
-              {syncStatus === 'live' ? (
-                <>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="hidden xs:inline">LIVE SYNC</span>
-                  <span className="xs:hidden">SYNC</span>
-                </>
-              ) : syncStatus === 'reconnecting' ? (
-                <>
-                  <RefreshCw className={`w-3 h-3 text-amber-400 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  <span>RECONNECTING</span>
-                </>
-              ) : (
-                <>
-                  <WifiOff className="w-3 h-3 text-red-400" />
-                  <span>OFFLINE</span>
-                </>
-              )}
+              {/* Avengers Geometric Crest */}
+              <div className="relative w-7 h-7 rounded-lg bg-gradient-to-br from-stark-red/25 via-infinity-purple/20 to-endgame-gold/30 border border-endgame-gold/40 flex items-center justify-center shadow-[0_0_12px_rgba(212,175,55,0.2)]">
+                <span className="font-display font-black text-xs text-endgame-gold tracking-tighter">A</span>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-stark-red border border-[#070A10]" />
+              </div>
+
+              <div>
+                <div className="flex items-center gap-1.5 leading-none">
+                  <span className="font-display font-extrabold text-sm sm:text-base tracking-wider text-off-white uppercase">
+                    RABAT CO 26.2
+                  </span>
+                  <span className="text-[10px] text-muted-text/80 font-mono tracking-tight hidden sm:inline">
+                    • Oct 16–18, 2026
+                  </span>
+                </div>
+                <div className="text-[10px] text-muted-text/80 font-label tracking-wider flex items-center gap-1 mt-0.5 sm:hidden">
+                  <span>Oct 16–18, 2026</span>
+                </div>
+              </div>
             </button>
 
-            {/* Time Simulator Trigger */}
-            <button
-              onClick={() => setIsSimModalOpen(true)}
-              className={`p-1.5 rounded-full border text-xs transition-all active:scale-90 ${
-                simulatedTime
-                  ? 'bg-endgame-gold/20 text-endgame-gold border-endgame-gold/60 shadow-[0_0_10px_rgba(212,175,55,0.3)]'
-                  : 'bg-white/5 text-muted-text hover:text-off-white border-white/10 hover:border-white/20'
-              }`}
-              title="Time Simulator — Travel through conference timeline"
-              aria-label="Open Time Simulator"
-            >
-              <Zap className={`w-3.5 h-3.5 ${simulatedTime ? 'fill-endgame-gold' : ''}`} />
-            </button>
+            {/* Right Action Cluster: Confidence Badge + Time Machine + PWA Install */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              {/* Truthful Live Confidence Badge */}
+              {renderConfidenceBadge()}
 
-            {/* PWA Install Trigger */}
-            {!isInstalled && (
+              {/* Time Simulator Trigger */}
               <button
-                onClick={handleInstallClick}
-                className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-endgame-gold/40 text-[10px] font-label font-semibold text-off-white transition-all active:scale-95"
-                title="Install Rabat CO App on your phone"
+                onClick={() => setIsSimModalOpen(true)}
+                className={`p-1.5 rounded-full border text-xs transition-all active:scale-90 ${
+                  simulatedTime
+                    ? 'bg-endgame-gold/20 text-endgame-gold border-endgame-gold/60 shadow-[0_0_10px_rgba(212,175,55,0.3)]'
+                    : 'bg-white/5 text-muted-text hover:text-off-white border-white/10 hover:border-white/20'
+                }`}
+                title="Time Machine Simulator — Travel through conference timeline & test states"
+                aria-label="Open Time Machine Simulator"
               >
-                <Download className="w-3 h-3 text-endgame-gold" />
-                <span>Install</span>
+                <Zap className={`w-3.5 h-3.5 ${simulatedTime ? 'fill-endgame-gold text-endgame-gold' : ''}`} />
               </button>
-            )}
+
+              {/* Platform-Aware PWA Install Trigger (hidden when running in standalone mode) */}
+              {!isInstalled && (
+                <button
+                  onClick={handleInstallClick}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-endgame-gold/40 text-[10px] font-label font-semibold text-off-white transition-all active:scale-95"
+                  title="Install Rabat CO App on your phone"
+                  aria-label="Install Rabat CO App"
+                >
+                  <Download className="w-3 h-3 text-endgame-gold" />
+                  <span className="hidden xs:inline">Install</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
+      </header>
 
-        {/* Bottom Tier: Horizontally Scrollable Day Selector */}
-        <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between gap-1 overflow-x-auto no-scrollbar font-label">
-          {agenda?.days &&
-            Object.values(agenda.days).map((day: any) => {
-              const isSelected = selectedDayId === day.id;
-              const isDay1 = day.dayNumber === 1;
-              const isDay2 = day.dayNumber === 2;
+      {/* Accessible iOS & Platform Install Instruction Popover Modal */}
+      {showInstallGuide && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn font-sans">
+          <div className="w-full max-w-sm rounded-2xl glass-card border border-endgame-gold/40 p-5 shadow-2xl relative bg-[#080B12]/95 text-off-white">
+            <div className="flex items-center justify-between mb-3 font-label">
+              <div className="flex items-center gap-2 font-bold text-sm text-endgame-gold uppercase tracking-wider">
+                <Download className="w-4 h-4 text-endgame-gold" />
+                <span>Install Conference App</span>
+              </div>
+              <button
+                onClick={() => setShowInstallGuide(false)}
+                className="w-7 h-7 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-muted-text hover:text-off-white transition-colors"
+                aria-label="Close Install Guide"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
 
-              const activeStyles = isDay1
-                ? 'bg-stark-red/20 text-white border-stark-red shadow-[0_0_12px_rgba(183,28,28,0.35)]'
-                : isDay2
-                ? 'bg-infinity-purple/25 text-white border-infinity-purple shadow-[0_0_12px_rgba(106,27,154,0.35)]'
-                : 'bg-endgame-gold/25 text-white border-endgame-gold shadow-[0_0_12px_rgba(212,175,55,0.35)]';
+            <p className="text-xs text-muted-text mb-4 leading-relaxed">
+              Install <strong>Rabat CO 26.2</strong> on your device for instant offline access and real-time live agenda tracking during the conference.
+            </p>
 
-              const dotColor = isDay1
-                ? 'bg-stark-red'
-                : isDay2
-                ? 'bg-infinity-purple'
-                : 'bg-endgame-gold';
+            {isIOS ? (
+              <div className="space-y-3 p-3.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs font-sans">
+                <div className="flex items-start gap-2.5">
+                  <div className="w-6 h-6 rounded-lg bg-endgame-gold/15 border border-endgame-gold/30 flex items-center justify-center shrink-0 mt-0.5">
+                    <Share className="w-3.5 h-3.5 text-endgame-gold" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-off-white">1. Tap the Share button</span>
+                    <p className="text-[11px] text-muted-text mt-0.5">Located at the bottom of Safari.</p>
+                  </div>
+                </div>
 
-              return (
-                <button
-                  key={day.id}
-                  onClick={() => handleDayClick(day.id)}
-                  className={`flex-1 min-w-[100px] flex items-center justify-center gap-1.5 py-1 px-2 rounded-lg text-xs font-semibold transition-all select-none border active:scale-95 ${
-                    isSelected
-                      ? activeStyles
-                      : 'bg-white/[0.03] text-muted-text hover:text-off-white border-white/5 hover:border-white/15'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
-                  <span className="font-display tracking-wider uppercase text-[11px] sm:text-xs">
-                    DAY {day.dayNumber}: {day.codename}
-                  </span>
-                </button>
-              );
-            })}
+                <div className="flex items-start gap-2.5">
+                  <div className="w-6 h-6 rounded-lg bg-endgame-gold/15 border border-endgame-gold/30 flex items-center justify-center shrink-0 mt-0.5">
+                    <PlusSquare className="w-3.5 h-3.5 text-endgame-gold" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-off-white">2. Select "Add to Home Screen"</span>
+                    <p className="text-[11px] text-muted-text mt-0.5">Scroll down in the share sheet.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <div className="w-6 h-6 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs text-emerald-400">
+                    3
+                  </div>
+                  <div>
+                    <span className="font-bold text-off-white">3. Tap "Add" in the top right</span>
+                    <p className="text-[11px] text-muted-text mt-0.5">Launch directly from your home screen.</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2 p-3.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs">
+                <p>1. Tap the browser menu (<strong>⋮</strong> in Chrome).</p>
+                <p>2. Tap <strong>"Install App"</strong> or <strong>"Add to Home Screen"</strong>.</p>
+                <p>3. Confirm to launch the app in full-screen standalone mode.</p>
+              </div>
+            )}
+
+            <button
+              onClick={() => setShowInstallGuide(false)}
+              className="w-full mt-4 py-2.5 rounded-xl bg-endgame-gold hover:bg-amber-400 text-charcoal-black font-extrabold text-xs uppercase tracking-wider font-label transition-all active:scale-95 shadow-sm"
+            >
+              Got It
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+      )}
+    </>
   );
 };
+
+export default StickyHeader;
