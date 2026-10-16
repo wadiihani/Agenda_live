@@ -47,10 +47,18 @@ interface FeedbackItem {
   clientIp: string;
   overallRating: number;
   sessionRating: number;
+  sessionFeedbacks?: Array<{
+    sessionId: string;
+    sessionTitle: string;
+    sessionTime?: string;
+    facilitator?: string;
+    rating: number;
+    reason?: string;
+  }>;
   foodRating: number;
   foodComment?: string;
   wentWell: string;
-  wentBad: string;
+  wentBad?: string;
   improvement: string;
   submittedAt: string;
 }
@@ -417,13 +425,17 @@ export const AdminPage: React.FC = () => {
   if (searchQuery.trim()) {
     const q = searchQuery.toLowerCase().trim();
     filtered = filtered.filter((f) => {
+      const matchSessionFb = f.sessionFeedbacks?.some((s) =>
+        s.sessionTitle.toLowerCase().includes(q) || (s.reason && s.reason.toLowerCase().includes(q))
+      );
       return (
         f.memberName.toLowerCase().includes(q) ||
         f.clientIp.includes(q) ||
         (f.foodComment && f.foodComment.toLowerCase().includes(q)) ||
         (f.wentWell && f.wentWell.toLowerCase().includes(q)) ||
         (f.wentBad && f.wentBad.toLowerCase().includes(q)) ||
-        (f.improvement && f.improvement.toLowerCase().includes(q))
+        (f.improvement && f.improvement.toLowerCase().includes(q)) ||
+        matchSessionFb
       );
     });
   }
@@ -458,17 +470,24 @@ export const AdminPage: React.FC = () => {
 
     if (!sheet) {
       sheet = ss.insertSheet(sheetName);
-      var headers = ['Timestamp','Operative Name','Device IP','Overall Day Rating (1-5)','Sessions Rating (1-5)','Food Rating (1-5)','Food & Catering Notes','What Went Well','What Went Bad','What Can Be Improved'];
+      var headers = ['Timestamp','Operative Name','Device IP','Overall Day Rating (1-5)','Avg Sessions Rating (1-5)','Session Ratings & Why','Food Rating (1-5)','Food & Catering Notes','What Went Well','What Went Bad','What Can Be Improved'];
       sheet.appendRow(headers);
       var color = dayNumber === 1 ? '#B71C1C' : dayNumber === 2 ? '#6A1B9A' : '#D4AF37';
       sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setFontColor('#FFFFFF').setBackground(color).setHorizontalAlignment('center');
       sheet.setFrozenRows(1);
       sheet.setColumnWidth(1, 170); sheet.setColumnWidth(2, 160); sheet.setColumnWidth(3, 130);
-      sheet.setColumnWidth(7, 240); sheet.setColumnWidth(8, 280); sheet.setColumnWidth(9, 280); sheet.setColumnWidth(10, 280);
+      sheet.setColumnWidth(6, 300); sheet.setColumnWidth(8, 240); sheet.setColumnWidth(9, 280); sheet.setColumnWidth(10, 280); sheet.setColumnWidth(11, 280);
     }
 
-    sheet.appendRow([data.submittedAt, data.memberName, data.clientIp, data.overallRating, data.sessionRating, data.foodRating, data.foodComment, data.wentWell, data.wentBad, data.improvement]);
-    sheet.getRange(sheet.getLastRow(), 4, 1, 3).setHorizontalAlignment('center').setFontWeight('bold');
+    var sessionNotes = '';
+    if (Array.isArray(data.sessionFeedbacks) && data.sessionFeedbacks.length > 0) {
+      sessionNotes = data.sessionFeedbacks.map(function(s) {
+        return s.sessionTitle + ' [' + s.rating + '/5]' + (s.reason ? ': ' + s.reason : '');
+      }).join('\\n');
+    }
+
+    sheet.appendRow([data.submittedAt, data.memberName, data.clientIp, data.overallRating, data.sessionRating, sessionNotes, data.foodRating, data.foodComment, data.wentWell, data.wentBad || '', data.improvement]);
+    sheet.getRange(sheet.getLastRow(), 4, 1, 4).setHorizontalAlignment('center').setFontWeight('bold');
     return ContentService.createTextOutput(JSON.stringify({status:'success'})).setMimeType(ContentService.MimeType.JSON);
   } finally { lock.releaseLock(); }
 }
@@ -1490,8 +1509,48 @@ function createJsonResponse(obj) {
                 </div>
               )}
 
+              {/* Session-by-Session Evaluations if present */}
+              {item.sessionFeedbacks && item.sessionFeedbacks.length > 0 && (
+                <div className="p-3 rounded-xl bg-black/40 border border-white/5 space-y-2">
+                  <div className="flex items-center justify-between text-[11px] font-label font-bold text-arc-blue uppercase tracking-wider">
+                    <span className="flex items-center gap-1.5">
+                      <Layers className="w-3.5 h-3.5" />
+                      Session Ratings & Rationale ({item.sessionFeedbacks.length})
+                    </span>
+                    <span className="text-muted-text font-normal font-mono">
+                      Avg: {item.sessionRating}/5
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    {item.sessionFeedbacks.map((s, sIdx) => (
+                      <div
+                        key={sIdx}
+                        className="p-2.5 rounded-lg bg-surface-card/60 border border-white/5 flex flex-col justify-between gap-1.5"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="font-medium text-off-white leading-tight text-[11px]">
+                            {s.sessionTitle}
+                          </span>
+                          <span className="shrink-0 px-1.5 py-0.5 rounded bg-endgame-gold/15 text-endgame-gold font-mono font-bold text-[10px] flex items-center gap-0.5">
+                            <Star className="w-2.5 h-2.5 fill-current" />
+                            {s.rating}/5
+                          </span>
+                        </div>
+                        {s.reason ? (
+                          <p className="text-[11px] text-muted-text italic bg-black/25 p-1.5 rounded border border-white/5 font-sans leading-relaxed">
+                            "{s.reason}"
+                          </p>
+                        ) : (
+                          <span className="text-[10px] text-muted-text/40 italic">No comments</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Detailed Qualitative answers */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 text-xs">
+              <div className={`grid grid-cols-1 ${item.wentBad ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-3 pt-1 text-xs`}>
                 {/* Went well */}
                 <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
                   <div className="font-label text-[10px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1 mb-1">
@@ -1503,16 +1562,18 @@ function createJsonResponse(obj) {
                   </p>
                 </div>
 
-                {/* Went bad */}
-                <div className="p-3 rounded-xl bg-stark-red/5 border border-stark-red/20">
-                  <div className="font-label text-[10px] font-bold uppercase tracking-wider text-stark-red flex items-center gap-1 mb-1">
-                    <ThumbsDown className="w-3 h-3" />
-                    <span>What Went Bad</span>
+                {/* Went bad (only shown if legacy record contains it) */}
+                {item.wentBad && (
+                  <div className="p-3 rounded-xl bg-stark-red/5 border border-stark-red/20">
+                    <div className="font-label text-[10px] font-bold uppercase tracking-wider text-stark-red flex items-center gap-1 mb-1">
+                      <ThumbsDown className="w-3 h-3" />
+                      <span>What Went Bad</span>
+                    </div>
+                    <p className="text-off-white/90 leading-relaxed font-sans">
+                      {item.wentBad}
+                    </p>
                   </div>
-                  <p className="text-off-white/90 leading-relaxed font-sans">
-                    {item.wentBad || <span className="text-muted-text/50 italic">No comments</span>}
-                  </p>
-                </div>
+                )}
 
                 {/* Can improve */}
                 <div className="p-3 rounded-xl bg-endgame-gold/5 border border-endgame-gold/20">

@@ -63,7 +63,8 @@ function doPost(e) {
         'Operative Name',
         'Device IP',
         'Overall Day Rating (1-5)',
-        'Sessions Rating (1-5)',
+        'Avg Sessions Rating (1-5)',
+        'Session Ratings & Why',
         'Food Rating (1-5)',
         'Food & Catering Notes',
         'What Went Well',
@@ -92,16 +93,25 @@ function doPost(e) {
       sheet.setColumnWidth(2, 160); // Name
       sheet.setColumnWidth(3, 130); // IP
       sheet.setColumnWidth(4, 150); // Overall
-      sheet.setColumnWidth(5, 150); // Sessions
-      sheet.setColumnWidth(6, 140); // Food
-      sheet.setColumnWidth(7, 240); // Food Notes
-      sheet.setColumnWidth(8, 280); // Went Well
-      sheet.setColumnWidth(9, 280); // Went Bad
-      sheet.setColumnWidth(10, 280); // Improvements
+      sheet.setColumnWidth(5, 150); // Sessions Avg
+      sheet.setColumnWidth(6, 300); // Session Ratings & Why
+      sheet.setColumnWidth(7, 140); // Food
+      sheet.setColumnWidth(8, 240); // Food Notes
+      sheet.setColumnWidth(9, 280); // Went Well
+      sheet.setColumnWidth(10, 280); // Went Bad
+      sheet.setColumnWidth(11, 280); // Improvements
     }
 
     // Format timestamp
     var timestamp = data.submittedAt || new Date().toISOString();
+
+    // Format session ratings summary
+    var sessionNotes = '';
+    if (Array.isArray(data.sessionFeedbacks) && data.sessionFeedbacks.length > 0) {
+      sessionNotes = data.sessionFeedbacks.map(function(s) {
+        return s.sessionTitle + ' [' + s.rating + '/5]' + (s.reason ? ': ' + s.reason : '');
+      }).join('\n');
+    }
 
     // Append operative debrief row
     sheet.appendRow([
@@ -110,6 +120,7 @@ function doPost(e) {
       data.clientIp || '',
       data.overallRating || 0,
       data.sessionRating || 0,
+      sessionNotes,
       data.foodRating || 0,
       data.foodComment || '',
       data.wentWell || '',
@@ -120,9 +131,9 @@ function doPost(e) {
     var lastRow = sheet.getLastRow();
     
     // Style the new row: center numerical ratings and align text top
-    var rowRange = sheet.getRange(lastRow, 1, 1, 10);
+    var rowRange = sheet.getRange(lastRow, 1, 1, 11);
     rowRange.setVerticalAlignment('middle');
-    sheet.getRange(lastRow, 4, 1, 3).setHorizontalAlignment('center').setFontWeight('bold');
+    sheet.getRange(lastRow, 4, 1, 4).setHorizontalAlignment('center').setFontWeight('bold');
 
     return createJsonResponse({
       status: 'success',

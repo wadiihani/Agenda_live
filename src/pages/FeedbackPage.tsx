@@ -7,7 +7,6 @@ import {
   CheckCircle2, 
   AlertCircle, 
   ThumbsUp, 
-  ThumbsDown, 
   Sparkles, 
   User, 
   Send,
@@ -15,15 +14,19 @@ import {
   Calendar,
   Layers,
   ChevronRight,
-  Lock
+  Lock,
+  Clock,
+  MessageSquare
 } from 'lucide-react';
 import { useMember } from '../context/MemberContext';
 import { useLiveSession } from '../hooks/useLiveSession';
+import { useAgenda } from '../context/AgendaContext';
 import { AGENDA_DATA } from '../data/agenda';
 
 export const FeedbackPage: React.FC = () => {
   const { member, clientIp, setIsAuthModalOpen } = useMember();
   const { currentDay } = useLiveSession();
+  const { agenda } = useAgenda();
 
   // Selected Day (defaults to active day or Day 1)
   const [selectedDayId, setSelectedDayId] = useState<string>(
@@ -51,13 +54,14 @@ export const FeedbackPage: React.FC = () => {
 
   // Form ratings
   const [overallRating, setOverallRating] = useState<number>(5);
-  const [sessionRating, setSessionRating] = useState<number>(5);
   const [foodRating, setFoodRating] = useState<number>(5);
   const [foodComment, setFoodComment] = useState<string>('');
 
-  // Qualitative questions
+  // Per-session ratings and "why" rationale: key is sessionId
+  const [sessionFeedbacks, setSessionFeedbacks] = useState<Record<string, { rating: number; reason: string }>>({});
+
+  // Qualitative questions (what went bad is removed per instructions)
   const [wentWell, setWentWell] = useState<string>('');
-  const [wentBad, setWentBad] = useState<string>('');
   const [improvement, setImprovement] = useState<string>('');
 
   // Status
@@ -65,10 +69,40 @@ export const FeedbackPage: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
+  const currentAgenda = agenda || AGENDA_DATA;
   const activeDaySchedule =
-    AGENDA_DATA.days[selectedDayId as keyof typeof AGENDA_DATA.days] || AGENDA_DATA.days.day1;
+    currentAgenda.days?.[selectedDayId as keyof typeof currentAgenda.days] || AGENDA_DATA.days.day1;
 
   const isCurrentDayOpen = formsStatus[selectedDayId] !== false;
+
+  // Filter content sessions to rate (exclude pure breaks and check-in logistics)
+  const rateableSessions = (activeDaySchedule.sessions || []).filter(
+    (s) => s.type !== 'break' && s.type !== 'logistics'
+  );
+
+  const getSessionFeedback = (sessionId: string) => {
+    return sessionFeedbacks[sessionId] || { rating: 5, reason: '' };
+  };
+
+  const handleSessionRating = (sessionId: string, rating: number) => {
+    setSessionFeedbacks((prev) => ({
+      ...prev,
+      [sessionId]: {
+        ...(prev[sessionId] || { rating: 5, reason: '' }),
+        rating
+      }
+    }));
+  };
+
+  const handleSessionReason = (sessionId: string, reason: string) => {
+    setSessionFeedbacks((prev) => ({
+      ...prev,
+      [sessionId]: {
+        ...(prev[sessionId] || { rating: 5, reason: '' }),
+        reason
+      }
+    }));
+  };
 
   // Star Rating Component helper
   const StarPicker = ({
@@ -94,8 +128,9 @@ export const FeedbackPage: React.FC = () => {
           <button
             key={star}
             type="button"
+            disabled={!isCurrentDayOpen}
             onClick={() => onChange(star)}
-            className="p-1.5 rounded-lg bg-surface-card hover:bg-surface-hover border border-white/10 transition-transform active:scale-95"
+            className="p-1.5 rounded-lg bg-surface-card hover:bg-surface-hover border border-white/10 transition-transform active:scale-95 disabled:opacity-40"
             aria-label={`${star} star`}
           >
             <Icon
@@ -124,23 +159,42 @@ export const FeedbackPage: React.FC = () => {
       return;
     }
 
-    if (!wentWell.trim() && !wentBad.trim() && !improvement.trim()) {
-      setErrorMsg('Please share at least a short comment on what went well or could be improved.');
+    // Build structured session feedback list
+    const sessionList = rateableSessions.map((s) => {
+      const fb = getSessionFeedback(s.id);
+      return {
+        sessionId: s.id,
+        sessionTitle: s.title,
+        sessionTime: s.time || s.startTime || '',
+        facilitator: s.facilitator || '',
+        rating: fb.rating,
+        reason: fb.reason.trim()
+      };
+    });
+
+    const hasAnySessionReason = sessionList.some((s) => s.reason.length > 0);
+    if (!wentWell.trim() && !improvement.trim() && !hasAnySessionReason && !foodComment.trim()) {
+      setErrorMsg('Please share at least a short comment explaining your session ratings, what went well, or what can be improved.');
       return;
     }
 
     setErrorMsg('');
     setIsSubmitting(true);
 
+    const calculatedAvgSessionRating = sessionList.length > 0
+      ? Math.round((sessionList.reduce((sum, s) => sum + s.rating, 0) / sessionList.length) * 10) / 10
+      : 5;
+
     const payload = {
       dayId: selectedDayId,
       dayNumber: activeDaySchedule.dayNumber,
       overallRating,
-      sessionRating,
+      sessionRating: calculatedAvgSessionRating,
+      sessionFeedbacks: sessionList,
       foodRating,
       foodComment,
       wentWell,
-      wentBad,
+      wentBad: '', // removed from form, sent empty for compatibility
       improvement,
       memberName: member.name
     };
@@ -174,9 +228,9 @@ export const FeedbackPage: React.FC = () => {
 
   const handleResetForm = () => {
     setWentWell('');
-    setWentBad('');
     setImprovement('');
     setFoodComment('');
+    setSessionFeedbacks({});
     setIsSuccess(false);
   };
 
@@ -193,7 +247,7 @@ export const FeedbackPage: React.FC = () => {
             Daily Debrief & Feedback
           </h2>
           <p className="text-xs sm:text-sm text-muted-text mt-1 leading-relaxed">
-            Your mission debrief fuels continuous improvement for the conference. Rate sessions, catering, and share tactical observations.
+            Your mission debrief fuels continuous improvement for the conference. Rate each session and catering, share your reasons, and submit tactical observations.
           </p>
         </div>
 
@@ -258,7 +312,7 @@ export const FeedbackPage: React.FC = () => {
             </h3>
             <p className="text-xs sm:text-sm text-off-white/80 mt-1 max-w-md mx-auto leading-relaxed">
               Thank you, <strong>{member?.name || 'Operative'}</strong>. Your evaluation for{' '}
-              <strong>Day {activeDaySchedule.dayNumber} ({activeDaySchedule.codename})</strong> has been saved directly to the command records.
+              <strong>Day {activeDaySchedule.dayNumber} ({activeDaySchedule.codename})</strong> including your session-by-session ratings has been recorded.
             </p>
           </div>
           <button
@@ -277,7 +331,7 @@ export const FeedbackPage: React.FC = () => {
               Select Conference Day
             </label>
             <div className="grid grid-cols-3 gap-2">
-              {Object.values(AGENDA_DATA.days).map((day) => {
+              {Object.values(currentAgenda.days || AGENDA_DATA.days).map((day) => {
                 const isSelected = day.id === selectedDayId;
                 const isDayOpen = formsStatus[day.id] !== false;
                 return (
@@ -350,12 +404,12 @@ export const FeedbackPage: React.FC = () => {
             </motion.div>
           )}
 
-          {/* Section 1: Ratings */}
+          {/* Section 1: Overall Experience & Catering */}
           <div className="p-5 rounded-2xl glass-card border border-white/10 space-y-5">
             <div className="flex items-center gap-2 border-b border-white/5 pb-3">
               <Sparkles className="w-4 h-4 text-endgame-gold" />
               <h4 className="font-display font-bold text-lg uppercase tracking-wide text-off-white">
-                Ratings & Evaluation
+                General Experience & Catering
               </h4>
             </div>
 
@@ -365,14 +419,6 @@ export const FeedbackPage: React.FC = () => {
               onChange={setOverallRating}
               label={`Overall Day ${activeDaySchedule.dayNumber} Experience`}
               activeColor="text-endgame-gold"
-            />
-
-            {/* Sessions Rating */}
-            <StarPicker
-              value={sessionRating}
-              onChange={setSessionRating}
-              label="Sessions & Plenaries Execution"
-              activeColor="text-arc-blue"
             />
 
             {/* Food & Catering Rating */}
@@ -400,10 +446,119 @@ export const FeedbackPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Section 2: Tactical Questions (Went Well, Went Bad, Improvements) */}
+          {/* Section 2: Session-by-Session Ratings & Why */}
+          <div className="p-5 rounded-2xl glass-card border border-white/10 space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
+              <div className="flex items-center gap-2">
+                <Layers className="w-4 h-4 text-arc-blue" />
+                <h4 className="font-display font-bold text-lg uppercase tracking-wide text-off-white">
+                  Session-by-Session Ratings & Feedback
+                </h4>
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-arc-blue font-label bg-arc-blue/10 px-2.5 py-1 rounded-full border border-arc-blue/20 self-start sm:self-auto">
+                {rateableSessions.length} Sessions to Evaluate
+              </span>
+            </div>
+
+            <p className="text-xs text-muted-text -mt-2">
+              Score each session individually and explain the reason for your rating to help facilitators and Command refine conference delivery.
+            </p>
+
+            {rateableSessions.length === 0 ? (
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center text-xs text-muted-text">
+                No specific sessions scheduled for evaluation on Day {activeDaySchedule.dayNumber}.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {rateableSessions.map((session, idx) => {
+                  const currentFb = getSessionFeedback(session.id);
+                  return (
+                    <div
+                      key={session.id}
+                      className="p-4 rounded-xl bg-surface-card/70 border border-white/10 hover:border-arc-blue/30 transition-all space-y-3"
+                    >
+                      {/* Session Title & Metadata */}
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap text-[10px] font-label">
+                            <span className="px-2 py-0.5 rounded-md bg-white/10 text-off-white font-mono flex items-center gap-1">
+                              <Clock className="w-2.5 h-2.5 text-arc-blue" />
+                              {session.time || session.startTime || 'Scheduled'}
+                              {session.endTime ? ` - ${session.endTime}` : ''}
+                            </span>
+                            {session.facilitator && (
+                              <span className="px-2 py-0.5 rounded-md bg-arc-blue/15 text-arc-blue font-bold border border-arc-blue/20">
+                                {session.facilitator}
+                              </span>
+                            )}
+                            {session.track && session.track !== 'all' && (
+                              <span className="px-2 py-0.5 rounded-md bg-infinity-purple/20 text-purple-300 uppercase font-bold border border-infinity-purple/30">
+                                Track: {session.track}
+                              </span>
+                            )}
+                          </div>
+                          <h5 className="font-display font-bold text-sm sm:text-base text-off-white leading-snug">
+                            {idx + 1}. {session.title}
+                          </h5>
+                        </div>
+
+                        {/* Interactive Stars */}
+                        <div className="flex items-center gap-1.5 shrink-0 self-start sm:self-auto bg-black/40 px-2.5 py-1.5 rounded-lg border border-white/5">
+                          <span className="text-[11px] font-mono font-bold text-endgame-gold mr-1.5">
+                            {currentFb.rating} / 5
+                          </span>
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              disabled={!isCurrentDayOpen}
+                              onClick={() => handleSessionRating(session.id, star)}
+                              className="p-1 rounded hover:bg-white/10 transition-transform active:scale-90 disabled:opacity-40"
+                              aria-label={`${star} stars for ${session.title}`}
+                            >
+                              <Star
+                                className={`w-4 h-4 transition-colors ${
+                                  star <= currentFb.rating
+                                    ? 'text-endgame-gold fill-current drop-shadow-[0_0_6px_rgba(212,175,55,0.4)]'
+                                    : 'text-dim-text'
+                                }`}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Why this rating? */}
+                      <div className="space-y-1">
+                        <label className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-off-white/80 font-label">
+                          <MessageSquare className="w-3 h-3 text-arc-blue" />
+                          <span>Why this rating?</span>
+                          <span className="text-muted-text font-normal lowercase">(what worked, delivery, insights, pace...)</span>
+                        </label>
+                        <textarea
+                          value={currentFb.reason}
+                          disabled={!isCurrentDayOpen}
+                          onChange={(e) => handleSessionReason(session.id, e.target.value)}
+                          placeholder={
+                            isCurrentDayOpen
+                              ? `Why did you give ${currentFb.rating}/5? Share your thoughts on ${session.title}...`
+                              : 'Debrief window closed.'
+                          }
+                          rows={2}
+                          className="w-full p-2.5 rounded-lg bg-black/30 border border-white/10 focus:border-arc-blue text-xs text-off-white placeholder:text-muted-text/50 outline-none transition-all font-sans resize-none disabled:opacity-40 disabled:cursor-not-allowed"
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Section 3: Tactical Observations (Went Well, Improvements - What Went Bad removed) */}
           <div className="p-5 rounded-2xl glass-card border border-white/10 space-y-4">
             <div className="flex items-center gap-2 border-b border-white/5 pb-3">
-              <Layers className="w-4 h-4 text-arc-blue" />
+              <Sparkles className="w-4 h-4 text-endgame-gold" />
               <h4 className="font-display font-bold text-lg uppercase tracking-wide text-off-white">
                 Tactical Insights
               </h4>
@@ -422,22 +577,6 @@ export const FeedbackPage: React.FC = () => {
                 placeholder={isCurrentDayOpen ? "Highlight sessions that inspired you, great logistics, energizing moments, or team breakthroughs..." : "Debrief window closed."}
                 rows={3}
                 className="w-full p-3 rounded-xl bg-surface-card border border-emerald-500/25 focus:border-emerald-400 text-xs text-off-white placeholder:text-muted-text/50 outline-none transition-all font-sans resize-none disabled:opacity-40 disabled:cursor-not-allowed"
-              />
-            </div>
-
-            {/* What Went Bad */}
-            <div className="space-y-1.5">
-              <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-stark-red font-label">
-                <ThumbsDown className="w-3.5 h-3.5 text-stark-red" />
-                <span>What went bad or needs attention?</span>
-              </label>
-              <textarea
-                value={wentBad}
-                disabled={!isCurrentDayOpen}
-                onChange={(e) => setWentBad(e.target.value)}
-                placeholder={isCurrentDayOpen ? "Mention delays, logistical bottlenecks, lack of clarity, fatigue, or frustrating elements..." : "Debrief window closed."}
-                rows={3}
-                className="w-full p-3 rounded-xl bg-surface-card border border-stark-red/25 focus:border-stark-red text-xs text-off-white placeholder:text-muted-text/50 outline-none transition-all font-sans resize-none disabled:opacity-40 disabled:cursor-not-allowed"
               />
             </div>
 

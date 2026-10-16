@@ -226,6 +226,7 @@ export function handleFeedbackApi(req, res, next) {
         dayNumber,
         overallRating,
         sessionRating,
+        sessionFeedbacks,
         foodRating,
         foodComment,
         wentWell,
@@ -254,6 +255,21 @@ export function handleFeedbackApi(req, res, next) {
         });
       }
 
+      const parsedSessionFeedbacks = Array.isArray(sessionFeedbacks)
+        ? sessionFeedbacks.map((s) => ({
+            sessionId: String(s.sessionId || ''),
+            sessionTitle: String(s.sessionTitle || ''),
+            sessionTime: String(s.sessionTime || ''),
+            facilitator: String(s.facilitator || ''),
+            rating: Number(s.rating) || 5,
+            reason: String(s.reason || '').trim()
+          }))
+        : [];
+
+      const calcSessionRating = parsedSessionFeedbacks.length > 0
+        ? Math.round((parsedSessionFeedbacks.reduce((sum, s) => sum + s.rating, 0) / parsedSessionFeedbacks.length) * 10) / 10
+        : (Number(sessionRating) || 0);
+
       const feedbacks = readJson(FEEDBACK_FILE, []);
       const newFeedback = {
         id: `fb_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
@@ -263,7 +279,8 @@ export function handleFeedbackApi(req, res, next) {
         memberName: (memberName || '').trim() || 'Anonymous Operative',
         clientIp,
         overallRating: Number(overallRating) || 0,
-        sessionRating: Number(sessionRating) || 0,
+        sessionRating: calcSessionRating,
+        sessionFeedbacks: parsedSessionFeedbacks,
         foodRating: Number(foodRating) || 0,
         foodComment: (foodComment || '').trim(),
         wentWell: (wentWell || '').trim(),
@@ -513,7 +530,8 @@ export function handleFeedbackApi(req, res, next) {
       'Operative Name',
       'IP Address',
       'Overall Rating (1-5)',
-      'Sessions Rating (1-5)',
+      'Avg Sessions Rating (1-5)',
+      'Session Ratings & Why',
       'Food Rating (1-5)',
       'Food Comments',
       'What Went Well',
@@ -536,6 +554,11 @@ export function handleFeedbackApi(req, res, next) {
       escapeCsv(f.clientIp),
       escapeCsv(f.overallRating),
       escapeCsv(f.sessionRating),
+      escapeCsv(
+        (f.sessionFeedbacks || [])
+          .map((s) => `${s.sessionTitle}: ${s.rating}/5${s.reason ? ` ("${s.reason}")` : ''}`)
+          .join(' | ')
+      ),
       escapeCsv(f.foodRating),
       escapeCsv(f.foodComment || ''),
       escapeCsv(f.wentWell || ''),
