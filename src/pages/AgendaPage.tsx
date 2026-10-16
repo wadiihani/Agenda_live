@@ -153,6 +153,34 @@ export const AgendaPage: React.FC = () => {
 
   // Available tracks for current day
   const currentDayTracks: { id: TrackType; label: string; activeClass: string }[] = useMemo(() => {
+    if (selectedDayId === 'day0') {
+      return [
+        {
+          id: 'all',
+          label: 'All Operations',
+          activeClass: 'bg-white/20 text-white border-white/40 shadow-sm'
+        },
+        {
+          id: 'mms',
+          label: 'MMs Calibration',
+          activeClass: 'bg-endgame-gold/30 text-endgame-gold border-endgame-gold/60 shadow-sm'
+        },
+        {
+          id: 'newbies',
+          label: 'New Members',
+          activeClass: 'bg-stark-red/30 text-stark-red border-stark-red/60 shadow-sm'
+        }
+      ];
+    }
+    if (selectedDayId === 'lcm') {
+      return [
+        {
+          id: 'all',
+          label: 'All Parents & Members',
+          activeClass: 'bg-arc-blue/30 text-arc-blue border-arc-blue/60 shadow-sm'
+        }
+      ];
+    }
     if (activeDay.dayNumber === 1) {
       return [
         {
@@ -166,7 +194,7 @@ export const AgendaPage: React.FC = () => {
       return [
         {
           id: 'all',
-          label: 'All Tracks',
+          label: 'All Membership',
           activeClass: 'bg-white/20 text-white border-white/40 shadow-sm'
         },
         {
@@ -184,7 +212,7 @@ export const AgendaPage: React.FC = () => {
     return [
       {
         id: 'all',
-        label: 'All Tracks',
+        label: 'All Membership',
         activeClass: 'bg-white/20 text-white border-white/40 shadow-sm'
       },
       {
@@ -198,7 +226,7 @@ export const AgendaPage: React.FC = () => {
         activeClass: 'bg-endgame-gold/30 text-endgame-gold border-endgame-gold shadow-sm'
       }
     ];
-  }, [activeDay.dayNumber]);
+  }, [activeDay.dayNumber, selectedDayId]);
 
   return (
     <div className="space-y-4 pb-20 font-sans">
@@ -226,10 +254,37 @@ export const AgendaPage: React.FC = () => {
         </div>
 
         <h2 className="font-display font-extrabold text-2xl sm:text-3xl tracking-wide uppercase text-off-white">
-          DAY {activeDay.dayNumber}: {activeDay.codename}
+          {activeDay.dayNumber > 0 && activeDay.dayNumber < 4 ? `DAY ${activeDay.dayNumber}: ` : ''}{activeDay.codename}
         </h2>
-        <p className="text-xs sm:text-sm text-muted-text mt-1 max-w-xl leading-relaxed">
-          {activeDay.tagline}
+
+        {/* Daily Focus & Objective Badges */}
+        {(activeDay.focus || activeDay.objective) && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2.5 font-label">
+            {activeDay.focus && (
+              <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/8 text-xs">
+                <span className="text-[10px] uppercase tracking-wider text-endgame-gold font-bold block mb-0.5">
+                  MISSION FOCUS
+                </span>
+                <span className="font-semibold text-off-white/95">
+                  {activeDay.focus}
+                </span>
+              </div>
+            )}
+            {activeDay.objective && (
+              <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/8 text-xs">
+                <span className="text-[10px] uppercase tracking-wider text-arc-blue font-bold block mb-0.5">
+                  CORE OBJECTIVE
+                </span>
+                <span className="font-semibold text-off-white/95">
+                  {activeDay.objective}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        <p className="text-xs sm:text-sm text-muted-text mt-2.5 max-w-2xl leading-relaxed">
+          {activeDay.themeDesc || activeDay.tagline}
         </p>
 
         {/* Live session jump shortcut */}

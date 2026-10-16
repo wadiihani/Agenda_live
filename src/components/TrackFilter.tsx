@@ -11,25 +11,37 @@ interface TrackFilterProps {
 export const TrackFilter: React.FC<TrackFilterProps> = ({ activeTrack, onChangeTrack, dayNumber = 2 }) => {
   const getTracksForDay = (): { id: TrackType; label: string }[] => {
     switch (dayNumber) {
+      case 0:
+        return [
+          { id: 'all', label: 'All Operations' },
+          { id: 'day0', label: 'Day 0 / Conference Team' },
+          { id: 'mms', label: 'MMs Calibration' },
+          { id: 'newbies', label: 'New Members' }
+        ];
       case 1:
         return [
           { id: 'all', label: 'All Membership' }
         ];
       case 2:
         return [
-          { id: 'all', label: 'All Tracks' },
+          { id: 'all', label: 'All Membership' },
           { id: 'newbies', label: 'Newbies' },
           { id: 'igv', label: 'iGV Members' }
         ];
       case 3:
         return [
-          { id: 'all', label: 'All Tracks' },
+          { id: 'all', label: 'All Membership' },
           { id: 'newbies', label: 'Newbies' },
           { id: 'mms', label: 'MMs & Oldies' }
         ];
+      case 4:
+        return [
+          { id: 'all', label: 'All Operations' },
+          { id: 'parents', label: 'LCM / Parents' }
+        ];
       default:
         return [
-          { id: 'all', label: 'All Tracks' },
+          { id: 'all', label: 'All Membership' },
           { id: 'newbies', label: 'Newbies' },
           { id: 'igv', label: 'iGV Members' },
           { id: 'mms', label: 'MMs & Oldies' }
@@ -42,13 +54,16 @@ export const TrackFilter: React.FC<TrackFilterProps> = ({ activeTrack, onChangeT
   // Day-based gradient for track filter
   const getActivePillGradient = () => {
     switch (dayNumber) {
+      case 0:
       case 1:
         return 'bg-gradient-to-r from-stark-red to-steel-grey shadow-glow-red';
       case 2:
         return 'bg-gradient-to-r from-infinity-purple to-cosmic-blue shadow-glow-purple';
       case 3:
-      default:
         return 'bg-gradient-to-r from-endgame-gold to-earth-brown shadow-glow-gold text-midnight';
+      case 4:
+      default:
+        return 'bg-gradient-to-r from-arc-blue to-cosmic-blue shadow-glow-purple';
     }
   };
 

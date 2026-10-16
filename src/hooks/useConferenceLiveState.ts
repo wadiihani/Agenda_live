@@ -199,7 +199,7 @@ function useComputeConferenceLiveState(): ConferenceLiveState {
   const computeState = useCallback((): ConferenceLiveState => {
     const casa = getCasablancaParts();
     const activeAgenda = agenda || {};
-    const openingTimestamp = new Date(activeAgenda.meta?.openingDateTime || '2026-10-16T17:00:00').getTime();
+    const openingTimestamp = new Date(activeAgenda.meta?.openingDateTime || '2026-10-16T14:00:00').getTime();
     const closingTimestamp = new Date(activeAgenda.meta?.closingDateTime || '2026-10-18T17:00:00').getTime();
 
     const day1Schedule = activeAgenda.days?.day1;
@@ -238,7 +238,7 @@ function useComputeConferenceLiveState(): ConferenceLiveState {
       };
     };
 
-    // 1. Check if PRE_CONFERENCE (Before Fri Oct 16, 17:00 Casablanca)
+    // 1. Check if PRE_CONFERENCE (Before Fri Oct 16, 14:00 Casablanca)
     if (casa.timestamp < openingTimestamp) {
       const diffSecs = Math.max(0, Math.floor((openingTimestamp - casa.timestamp) / 1000));
       const countdown = formatCountdown(diffSecs);

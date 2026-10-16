@@ -14,7 +14,8 @@ import {
   BookOpen,
   Share2,
   Target,
-  Heart
+  Heart,
+  ListOrdered
 } from 'lucide-react';
 import { Session, formatSessionTitle } from '../data/agenda';
 import { useAgenda } from '../context/AgendaContext';
@@ -328,6 +329,19 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
               </div>
             )}
 
+            {/* Session Overview (if distinct from description) */}
+            {session.sessionOverview && session.sessionOverview !== session.description && (
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-widest text-endgame-gold font-label mb-1.5 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-endgame-gold" />
+                  <span>Session Overview</span>
+                </h4>
+                <div className="text-xs sm:text-sm text-off-white/95 leading-relaxed font-sans bg-endgame-gold/10 p-3.5 rounded-2xl border border-endgame-gold/30">
+                  {session.sessionOverview}
+                </div>
+              </div>
+            )}
+
             {/* Concrete Objective */}
             {session.concreteObjective && (
               <div>
@@ -350,6 +364,31 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
                 </h4>
                 <div className="text-xs sm:text-sm text-off-white/95 leading-relaxed font-sans bg-infinity-purple/15 p-3.5 rounded-2xl border border-infinity-purple/35">
                   {session.emotionalObjective}
+                </div>
+              </div>
+            )}
+
+            {/* Session Breakdown & Outline (Numbered Steps) */}
+            {session.outline && session.outline.length > 0 && (
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-widest text-amber-300 font-label mb-2 flex items-center gap-1.5">
+                  <ListOrdered className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Session Outline & Breakdown ({session.outline.length} Steps)</span>
+                </h4>
+                <div className="space-y-2">
+                  {session.outline.map((step, idx) => (
+                    <div 
+                      key={idx}
+                      className="p-3 rounded-xl bg-white/[0.03] border border-white/8 hover:border-amber-400/30 transition-colors flex items-start gap-3 text-xs sm:text-sm"
+                    >
+                      <span className="w-6 h-6 rounded-full bg-gradient-to-br from-stark-red/30 to-endgame-gold/30 border border-endgame-gold/40 text-endgame-gold font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                        {idx + 1}
+                      </span>
+                      <p className="text-off-white/95 leading-relaxed font-sans">
+                        {step}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

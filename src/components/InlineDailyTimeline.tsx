@@ -77,22 +77,34 @@ export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId,
 
   // Available tracks for this day
   const availableTracks = useMemo(() => {
+    if (dayId === 'day0') {
+      return [
+        { id: 'all', label: 'All Operations' },
+        { id: 'mms', label: 'MMs Calibration' },
+        { id: 'newbies', label: 'New Members' }
+      ];
+    }
+    if (dayId === 'lcm') {
+      return [
+        { id: 'all', label: 'All Parents & Members' }
+      ];
+    }
     if (selectedDay.dayNumber === 1) {
-      return [{ id: 'all', label: 'All Operations' }];
+      return [{ id: 'all', label: 'All Membership' }];
     }
     if (selectedDay.dayNumber === 2) {
       return [
-        { id: 'all', label: 'All Tracks' },
-        { id: 'newbies', label: 'Newbies / Members' },
-        { id: 'igv', label: 'iGV / EB Track' }
+        { id: 'all', label: 'All Membership' },
+        { id: 'newbies', label: 'Newbies' },
+        { id: 'igv', label: 'iGV Members' }
       ];
     }
     return [
-      { id: 'all', label: 'All Tracks' },
+      { id: 'all', label: 'All Membership' },
       { id: 'newbies', label: 'Newbies' },
       { id: 'mms', label: 'MMs & Oldies' }
     ];
-  }, [selectedDay.dayNumber]);
+  }, [selectedDay.dayNumber, dayId]);
 
   // Determine if a session is currently live
   const isSessionLive = (s: Session): boolean => {

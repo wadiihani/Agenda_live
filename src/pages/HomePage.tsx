@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FolderOpen, ExternalLink, Camera } from 'lucide-react';
+import { FolderOpen, ExternalLink, Camera, Shield, Target, ChevronDown, ChevronUp } from 'lucide-react';
 import { LiveBanner } from '../components/LiveBanner';
 import { PinnedAnnouncementBanner } from '../components/PinnedAnnouncementBanner';
 import { DayTabs } from '../components/DayTabs';
@@ -13,6 +13,7 @@ import { useConferenceDayState } from '../hooks/useConferenceLiveState';
 
 export const HomePage: React.FC = () => {
   const [activeModalSession, setActiveModalSession] = useState<Session | null>(null);
+  const [showBriefing, setShowBriefing] = useState<boolean>(false);
   const { agenda, selectedDayId, setSelectedDayId } = useAgenda();
   const { activeDayId, isPostEvent } = useConferenceDayState();
   const driveUrl = agenda?.meta?.mediaDriveUrl || 'https://drive.google.com/drive/folders/1rabat-co26-2-vault?usp=sharing';
@@ -86,6 +87,62 @@ export const HomePage: React.FC = () => {
       {/* 3. 4-STATE TIME-AWARE COMMAND CENTER (Happening Now / Up Next / Break / Day Complete) */}
       <div className="w-full max-w-xl mx-auto">
         <LiveBanner onSelectSession={(s) => setActiveModalSession(s)} />
+      </div>
+
+      {/* THEME BRIEFING & CORE OBJECTIVES (Requirement 1.2) */}
+      <div className="w-full max-w-xl mx-auto">
+        <div className="rounded-2xl glass-card border border-white/10 overflow-hidden bg-gradient-to-br from-black/60 via-[#070A10] to-black/80 shadow-md">
+          <button
+            onClick={() => setShowBriefing((prev) => !prev)}
+            className="w-full p-3 sm:p-3.5 flex items-center justify-between gap-3 text-left transition-colors hover:bg-white/[0.02] active:scale-[0.99]"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-endgame-gold/15 border border-endgame-gold/30 flex items-center justify-center shrink-0">
+                <Shield className="w-4 h-4 text-endgame-gold" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-[10px] font-mono uppercase tracking-widest text-endgame-gold font-bold">
+                  CONFERENCE BRIEFING
+                </div>
+                <div className="text-xs sm:text-sm font-bold text-off-white truncate font-display tracking-wide uppercase">
+                  AVENGERS · THE MISSION NARRATIVE
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-muted-text font-label shrink-0">
+              <span className="text-[11px] hidden xs:inline">{showBriefing ? 'Collapse' : 'Read Brief'}</span>
+              {showBriefing ? <ChevronUp className="w-4 h-4 text-endgame-gold" /> : <ChevronDown className="w-4 h-4 text-endgame-gold" />}
+            </div>
+          </button>
+
+          {showBriefing && (
+            <div className="px-4 pb-4 pt-1 space-y-3.5 border-t border-white/5 font-sans">
+              <div className="text-xs text-off-white/90 leading-relaxed font-sans bg-black/40 p-3.5 rounded-xl border border-white/5 whitespace-pre-line">
+                {agenda?.meta?.themeStory}
+              </div>
+
+              {/* Internal Conference Objectives */}
+              {agenda?.meta?.internalObjectives && (
+                <div>
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-arc-blue font-bold mb-2 flex items-center gap-1.5 font-label">
+                    <Target className="w-3.5 h-3.5 text-arc-blue" />
+                    <span>9 INTERNAL CONFERENCE OBJECTIVES</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {agenda.meta.internalObjectives.map((obj, i) => (
+                      <span
+                        key={i}
+                        className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-white/[0.04] text-off-white border border-white/10 font-label"
+                      >
+                        {obj}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 4. 3-DAY SELECTOR TABS RELOCATED DIRECTLY ABOVE TIMELINE (Requirement 4) */}
