@@ -39,7 +39,8 @@ export const PhotoWallPage: React.FC = () => {
   const [caption, setCaption] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedFileName, setSelectedFileName] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch photos
   const fetchPhotos = useCallback(() => {
@@ -58,18 +59,18 @@ export const PhotoWallPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [fetchPhotos]);
 
-  // Handle file selection
+  // Handle file selection (from gallery or camera)
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file.');
+    if (!file.type.startsWith('image/') && !file.name.match(/\.(jpe?g|png|webp|heic|heif)$/i)) {
+      alert('Please select an image file from your gallery.');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image too large. Max 5MB.');
+    if (file.size > 12 * 1024 * 1024) {
+      alert('Image file is too large. Please select a photo under 12MB.');
       return;
     }
 
@@ -77,7 +78,7 @@ export const PhotoWallPage: React.FC = () => {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const result = ev.target?.result as string;
-      // Compress via canvas for consistency
+      // Compress via canvas for fast uploads
       const img = new window.Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
@@ -99,6 +100,8 @@ export const PhotoWallPage: React.FC = () => {
       img.src = result;
     };
     reader.readAsDataURL(file);
+    // Reset input value so re-selecting same photo works
+    e.target.value = '';
   };
 
   // Upload photo
@@ -346,9 +349,16 @@ export const PhotoWallPage: React.FC = () => {
                 Share a moment from the conference with everyone.
               </p>
 
-              {/* File Select */}
+              {/* Hidden File Select Inputs: Gallery (default) & Camera */}
               <input
-                ref={fileInputRef}
+                ref={galleryInputRef}
+                type="file"
+                accept="image/*,image/heic,image/heif,image/png,image/jpeg,image/webp"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <input
+                ref={cameraInputRef}
                 type="file"
                 accept="image/*"
                 capture="environment"
@@ -357,31 +367,50 @@ export const PhotoWallPage: React.FC = () => {
               />
 
               {selectedImage ? (
-                <div className="relative rounded-xl overflow-hidden border border-white/10 mb-4">
-                  <img src={selectedImage} alt="Preview" className="w-full h-48 object-cover" />
+                <div className="relative rounded-xl overflow-hidden border border-white/10 mb-4 bg-black/40">
+                  <img src={selectedImage} alt="Preview" className="w-full h-52 object-contain" />
                   <button
                     onClick={() => { setSelectedImage(null); setSelectedFileName(''); }}
-                    className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white transition-colors"
+                    className="absolute top-2 right-2 p-1.5 rounded-full bg-black/70 hover:bg-black/90 text-white transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
-                  <div className="absolute bottom-2 left-2 text-[10px] text-white/70 bg-black/50 px-2 py-0.5 rounded-full font-label">
+                  <div className="absolute bottom-2 left-2 text-[10px] text-white/90 bg-black/60 px-2.5 py-1 rounded-full font-label truncate max-w-[80%]">
                     {selectedFileName}
                   </div>
                 </div>
               ) : (
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-10 rounded-xl border-2 border-dashed border-white/15 hover:border-infinity-purple/40 bg-white/3 hover:bg-infinity-purple/5 flex flex-col items-center justify-center gap-2 transition-all mb-4 group"
-                >
-                  <Camera className="w-8 h-8 text-muted-text group-hover:text-infinity-purple transition-colors" />
-                  <span className="text-xs text-muted-text group-hover:text-off-white font-label uppercase tracking-wider">
-                    Tap to select photo
-                  </span>
-                  <span className="text-[10px] text-muted-text/60">
-                    JPG, PNG · Max 5MB
-                  </span>
-                </button>
+                <div className="space-y-2.5 mb-4">
+                  {/* Primary: Select from Photo Gallery */}
+                  <button
+                    type="button"
+                    onClick={() => galleryInputRef.current?.click()}
+                    className="w-full py-8 px-4 rounded-xl border-2 border-dashed border-infinity-purple/40 hover:border-infinity-purple bg-infinity-purple/5 hover:bg-infinity-purple/10 flex flex-col items-center justify-center gap-2 transition-all group active:scale-[0.99]"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-infinity-purple/20 border border-infinity-purple/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <ImageIcon className="w-6 h-6 text-purple-300" />
+                    </div>
+                    <span className="text-sm font-bold text-off-white font-label uppercase tracking-wider">
+                      Select from Photo Gallery
+                    </span>
+                    <span className="text-[11px] text-muted-text">
+                      Choose any saved photo from your phone or device
+                    </span>
+                    <span className="text-[10px] text-muted-text/60 font-mono mt-0.5">
+                      JPG, PNG, WebP, HEIC · Up to 12MB
+                    </span>
+                  </button>
+
+                  {/* Secondary: Take Live Photo */}
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="w-full py-2.5 px-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 flex items-center justify-center gap-2 text-xs font-semibold text-muted-text hover:text-off-white transition-all font-label"
+                  >
+                    <Camera className="w-4 h-4 text-arc-blue" />
+                    <span>Or Take a Photo with Camera</span>
+                  </button>
+                </div>
               )}
 
               {/* Caption */}
