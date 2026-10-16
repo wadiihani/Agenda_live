@@ -372,7 +372,7 @@ export function importAgendaData(sourceData, format = 'auto') {
       timezone: 'Africa/Casablanca',
       openingDateTime: '2026-10-16T17:00:00',
       closingDateTime: '2026-10-18T17:00:00',
-      mediaDriveUrl: existingAgenda?.meta?.mediaDriveUrl || 'https://drive.google.com/drive/folders/1rabat-co26-2-vault?usp=sharing',
+      mediaDriveUrl: existingAgenda?.meta?.mediaDriveUrl || 'https://drive.google.com/drive/folders/1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX?usp=drive_link',
       location: 'Rabat, Morocco',
       themeStory: existingAgenda?.meta?.themeStory || '',
       lastUpdated: new Date().toISOString(),

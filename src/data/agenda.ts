@@ -151,7 +151,7 @@ export const AGENDA_DATA: ConferenceAgenda = {
     timezone: "Africa/Casablanca",
     openingDateTime: "2026-10-16T14:00:00",
     closingDateTime: "2026-10-18T17:00:00",
-    mediaDriveUrl: "https://drive.google.com/drive/folders/1rabat-co26-2-vault?usp=sharing",
+    mediaDriveUrl: "https://drive.google.com/drive/folders/1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX?usp=drive_link",
     location: "Rabat, Morocco",
     themeTitle: "AVENGERS (Rabat'CO 26.2 / ASGARD'CO 26)",
     themeStory: `AIESEC Rabat has spent the last six months in its own kind of Civil War. Not because we lacked talented people. Not because we lacked potential. But because our strengths were not always connected by one common mission. Leadership became disconnected. Conflicts created distance. Departments became more siloed. Functional capacity was not always strong enough to execute. Marketing struggled to create intentional attraction, while OPEX faced conversion and execution challenges. IR and ER connections were not strong enough, and the LC gradually lost some of the unity and accountability needed to move as one team.

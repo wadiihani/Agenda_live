@@ -311,14 +311,14 @@ export function handleFeedbackApi(req, res, next) {
   if (url === '/api/config' && req.method === 'GET') {
     const config = readJson(CONFIG_FILE, { 
       googleSheetWebhookUrl: '',
-      mediaDriveUrl: 'https://drive.google.com/drive/folders/1rabat-co26-2-vault?usp=sharing',
+      mediaDriveUrl: 'https://drive.google.com/drive/folders/1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX?usp=drive_link',
       formsStatus: { day1: true, day2: false, day3: false }
     });
     if (!config.formsStatus) {
       config.formsStatus = { day1: true, day2: false, day3: false };
     }
     if (!config.mediaDriveUrl) {
-      config.mediaDriveUrl = 'https://drive.google.com/drive/folders/1rabat-co26-2-vault?usp=sharing';
+      config.mediaDriveUrl = 'https://drive.google.com/drive/folders/1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX?usp=drive_link';
     }
     return sendJson(200, config);
   }
@@ -328,7 +328,7 @@ export function handleFeedbackApi(req, res, next) {
     return parseBody((data) => {
       const config = readJson(CONFIG_FILE, { 
         googleSheetWebhookUrl: '',
-        mediaDriveUrl: 'https://drive.google.com/drive/folders/1rabat-co26-2-vault?usp=sharing',
+        mediaDriveUrl: 'https://drive.google.com/drive/folders/1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX?usp=drive_link',
         formsStatus: { day1: true, day2: false, day3: false }
       });
       if (typeof data.googleSheetWebhookUrl === 'string') {

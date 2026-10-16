@@ -16,7 +16,7 @@ export const HomePage: React.FC = () => {
   const [showBriefing, setShowBriefing] = useState<boolean>(false);
   const { agenda, selectedDayId, setSelectedDayId } = useAgenda();
   const { activeDayId, isPostEvent } = useConferenceDayState();
-  const driveUrl = agenda?.meta?.mediaDriveUrl || 'https://drive.google.com/drive/folders/1rabat-co26-2-vault?usp=sharing';
+  const driveUrl = agenda?.meta?.mediaDriveUrl || 'https://drive.google.com/drive/folders/1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX?usp=drive_link';
 
   // Auto-select active conference day by default (Requirement 4)
   const [timelineDayId, setTimelineDayId] = useState<string>(() => {

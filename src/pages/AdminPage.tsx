@@ -94,7 +94,7 @@ export const AdminPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Google Drive Media Vault State
-  const [driveUrl, setDriveUrl] = useState<string>('https://drive.google.com/drive/folders/1rabat-co26-2-vault?usp=sharing');
+  const [driveUrl, setDriveUrl] = useState<string>('https://drive.google.com/drive/folders/1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX?usp=drive_link');
   const [isSavingDriveUrl, setIsSavingDriveUrl] = useState<boolean>(false);
 
   // Check admin on mount or change
