@@ -95,7 +95,12 @@ export const AdminPage: React.FC = () => {
 
   // Google Drive Media Vault State
   const [driveUrl, setDriveUrl] = useState<string>('https://drive.google.com/drive/folders/1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX?usp=drive_link');
+  const [driveWebhookUrl, setDriveWebhookUrl] = useState<string>('');
   const [isSavingDriveUrl, setIsSavingDriveUrl] = useState<boolean>(false);
+  const [isSavingDriveWebhook, setIsSavingDriveWebhook] = useState<boolean>(false);
+  const [isTestingDrive, setIsTestingDrive] = useState<boolean>(false);
+  const [showDriveInstructions, setShowDriveInstructions] = useState<boolean>(false);
+  const [copiedDriveScript, setCopiedDriveScript] = useState<boolean>(false);
 
   // Check admin on mount or change
   useEffect(() => {
@@ -141,6 +146,9 @@ export const AdminPage: React.FC = () => {
         if (data.googleSheetWebhookUrl) {
           setWebhookUrl(data.googleSheetWebhookUrl);
         }
+        if (data.googleDriveWebhookUrl !== undefined) {
+          setDriveWebhookUrl(data.googleDriveWebhookUrl);
+        }
         if (data.mediaDriveUrl) {
           setDriveUrl(data.mediaDriveUrl);
         }
@@ -169,6 +177,55 @@ export const AdminPage: React.FC = () => {
       setStatusMessage(`Error: ${e.message}`);
     } finally {
       setIsSavingDriveUrl(false);
+    }
+  };
+
+  const handleSaveDriveWebhook = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingDriveWebhook(true);
+    setStatusMessage('Saving Google Drive Webhook URL...');
+    try {
+      const res = await fetch('/api/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ googleDriveWebhookUrl: driveWebhookUrl })
+      });
+      if (res.ok) {
+        setStatusMessage('Google Drive Upload Webhook URL saved successfully!');
+        setTimeout(() => setStatusMessage(''), 4000);
+      } else {
+        setStatusMessage('Failed to save Google Drive Webhook URL.');
+      }
+    } catch (e: any) {
+      setStatusMessage(`Error: ${e.message}`);
+    } finally {
+      setIsSavingDriveWebhook(false);
+    }
+  };
+
+  const handleTestDriveWebhook = async () => {
+    if (!driveWebhookUrl.trim()) {
+      setStatusMessage('Please enter a Google Drive Webhook URL first.');
+      return;
+    }
+    setIsTestingDrive(true);
+    setStatusMessage('Pinging Google Drive Webhook with diagnostic image...');
+    try {
+      const res = await fetch('/api/test-drive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: driveWebhookUrl })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatusMessage('Diagnostic Ping confirmed! Image uploaded directly to Google Drive folder.');
+      } else {
+        setStatusMessage(`Drive Diagnostic Error: ${data.error || 'Check that Web App access is set to Anyone'}`);
+      }
+    } catch (err: any) {
+      setStatusMessage(`Drive Connection Error: ${err.message}`);
+    } finally {
+      setIsTestingDrive(false);
     }
   };
 
@@ -423,6 +480,73 @@ function doGet(e) {
     navigator.clipboard.writeText(scriptCode);
     setCopiedScript(true);
     setTimeout(() => setCopiedScript(false), 2500);
+  };
+
+  const driveScriptCode = `var TARGET_FOLDER_ID = "1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX";
+
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  lock.tryLock(30000);
+  try {
+    var data = null;
+    if (e && e.postData && e.postData.contents) {
+      try { data = JSON.parse(e.postData.contents); } catch(err) { data = e.parameter; }
+    } else if (e && e.parameter) { data = e.parameter; }
+    if (!data) return createJsonResponse({ status: 'error', message: 'No payload data received' });
+
+    var folder = DriveApp.getFolderById(TARGET_FOLDER_ID);
+    if (!folder) return createJsonResponse({ status: 'error', message: 'Target folder not found' });
+
+    var imageData = data.imageData || data.base64 || '';
+    if (!imageData) return createJsonResponse({ status: 'error', message: 'No image data provided' });
+
+    var mimeType = 'image/jpeg';
+    var base64Content = imageData;
+    if (imageData.indexOf('data:') === 0 && imageData.indexOf(';base64,') > -1) {
+      var parts = imageData.split(';base64,');
+      mimeType = parts[0].replace('data:', '');
+      base64Content = parts[1];
+    }
+
+    var decoded = Utilities.base64Decode(base64Content);
+    var uploader = (data.uploaderName || 'delegate').replace(/[^a-zA-Z0-9_-]/g, '_');
+    var timestamp = Utilities.formatDate(new Date(), 'GMT', 'yyyyMMdd_HHmmss');
+    var extension = mimeType.indexOf('png') > -1 ? '.png' : '.jpg';
+    var fileName = 'asgard_' + uploader + '_' + timestamp + extension;
+
+    var blob = Utilities.newBlob(decoded, mimeType, fileName);
+    var file = folder.createFile(blob);
+
+    if (data.caption) {
+      file.setDescription('Caption: ' + data.caption + ' | Uploaded by: ' + (data.uploaderName || 'Delegate'));
+    }
+
+    return createJsonResponse({
+      status: 'success',
+      message: 'Photo uploaded directly into Google Drive folder!',
+      fileId: file.getId(),
+      fileName: fileName,
+      fileUrl: file.getUrl()
+    });
+  } catch (err) {
+    return createJsonResponse({ status: 'error', error: err.toString() });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function doGet(e) {
+  return createJsonResponse({ status: 'online', message: 'Asgard CO 26 Photo Uploader is ready.', folderId: TARGET_FOLDER_ID });
+}
+
+function createJsonResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}`;
+
+  const copyDriveScriptToClipboard = () => {
+    navigator.clipboard.writeText(driveScriptCode);
+    setCopiedDriveScript(true);
+    setTimeout(() => setCopiedDriveScript(false), 2500);
   };
 
   // --------------------------------------------------------------------------
@@ -1009,9 +1133,10 @@ function doGet(e) {
           </div>
         </div>
 
+        {/* 1. Shared Folder Link */}
         <div className="space-y-2">
           <label className="block text-xs font-semibold text-off-white font-label">
-            Shared Google Drive Folder Link (URL)
+            1. Shared Google Drive Folder Link (URL)
           </label>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <input
@@ -1037,8 +1162,102 @@ function doGet(e) {
             </button>
           </div>
           <p className="text-[11px] text-muted-text/80">
-            This Drive folder is linked directly on the Home page and in the post-conference Media Vault. Ensure folder sharing permission is set to <strong>"Anyone with the link can edit/upload"</strong>.
+            This Drive folder is linked on the Home page, Photo Wall, and Media Vault. Make sure sharing is set to <strong>"Anyone with the link can edit/upload"</strong>.
           </p>
+        </div>
+
+        {/* 2. Automated Google Drive Upload Engine (Apps Script Webhook) */}
+        <div className="pt-4 border-t border-white/10 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <div className="flex items-center gap-2">
+                <label className="block text-xs font-semibold text-off-white font-label">
+                  2. Direct Google Drive Auto-Upload Webhook (Web App)
+                </label>
+                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider font-label ${
+                  driveWebhookUrl ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-white/5 text-muted-text border border-white/10'
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${driveWebhookUrl ? 'bg-emerald-400' : 'bg-dim-text'}`} />
+                  {driveWebhookUrl ? 'Auto-Upload Active' : 'Not Linked'}
+                </span>
+              </div>
+              <p className="text-[11px] text-muted-text mt-0.5">
+                Allows delegates to upload photos directly from the app into the Drive folder without opening external tabs.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowDriveInstructions(!showDriveInstructions)}
+              className="text-xs text-endgame-gold hover:underline font-label flex items-center gap-1 self-start sm:self-auto"
+            >
+              <span>Setup Guide</span>
+              {showDriveInstructions ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+
+          <form onSubmit={handleSaveDriveWebhook} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 font-label">
+            <input
+              type="url"
+              value={driveWebhookUrl}
+              onChange={(e) => setDriveWebhookUrl(e.target.value)}
+              placeholder="Paste Google Apps Script Web App URL (https://script.google.com/macros/s/.../exec)"
+              className="flex-1 px-3.5 py-2.5 rounded-xl bg-surface-card border border-white/10 focus:border-endgame-gold text-xs text-off-white placeholder:text-muted-text/50 outline-none transition-all font-mono"
+            />
+            <div className="flex items-center gap-2">
+              <button
+                type="submit"
+                disabled={isSavingDriveWebhook}
+                className="px-4 py-2.5 rounded-xl bg-endgame-gold hover:bg-amber-400 text-charcoal-black font-extrabold text-xs uppercase tracking-wider transition-all shrink-0 active:scale-95 disabled:opacity-50"
+              >
+                {isSavingDriveWebhook ? 'Saving...' : 'Save Webhook'}
+              </button>
+
+              {driveWebhookUrl && (
+                <button
+                  type="button"
+                  onClick={handleTestDriveWebhook}
+                  disabled={isTestingDrive}
+                  className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-off-white text-xs font-semibold hover:border-endgame-gold transition-all shrink-0 flex items-center gap-1.5"
+                  title="Send a sample badge to Google Drive to verify connection"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isTestingDrive ? 'animate-spin' : ''}`} />
+                  <span>{isTestingDrive ? 'Testing...' : 'Test Drive Ping'}</span>
+                </button>
+              )}
+            </div>
+          </form>
+
+          {/* Drive Setup Guide Accordion */}
+          {showDriveInstructions && (
+            <div className="p-4 rounded-xl bg-black/60 border border-white/10 space-y-3 font-sans text-xs text-muted-text leading-relaxed">
+              <div className="flex items-center justify-between text-off-white font-bold font-label">
+                <span>Google Drive Photo Uploader Setup (Takes ~1 min):</span>
+                <button
+                  onClick={copyDriveScriptToClipboard}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-off-white text-xs font-label transition-colors"
+                >
+                  {copiedDriveScript ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedDriveScript ? 'Copied Code!' : 'Copy Script Code'}</span>
+                </button>
+              </div>
+              <ol className="list-decimal pl-4 space-y-1.5">
+                <li>Open Google Drive (<a href="https://script.google.com" target="_blank" rel="noopener noreferrer" className="text-endgame-gold underline">script.google.com</a>).</li>
+                <li>Click <strong>+ New project</strong> and title it <em>"Asgard Photo Uploader"</em>.</li>
+                <li>Delete existing code, click <strong>"Copy Script Code"</strong> above, and paste it.</li>
+                <li>Click <strong>Save</strong> (Ctrl+S).</li>
+                <li>Click <strong>Deploy → New deployment</strong> (top-right).</li>
+                <li>Choose type <strong>Web app</strong>. Set:
+                  <ul className="list-disc pl-5 mt-1 space-y-0.5">
+                    <li>Description: <em>"Asgard Photo Upload"</em></li>
+                    <li>Execute as: <em>"Me"</em></li>
+                    <li>Who has access: <strong>"Anyone"</strong> (crucial so delegates can upload).</li>
+                  </ul>
+                </li>
+                <li>Click <strong>Deploy</strong>, grant permissions, and copy the Web App URL (ends in <code>/exec</code>).</li>
+                <li>Paste the URL into the box above and click <strong>Test Drive Ping</strong>!</li>
+              </ol>
+            </div>
+          )}
         </div>
       </div>
       </>

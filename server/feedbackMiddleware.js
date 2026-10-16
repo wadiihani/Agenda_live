@@ -102,6 +102,34 @@ async function forwardToGoogleSheet(webhookUrl, payload) {
   }
 }
 
+// Forward to Google Drive Webhook with redirect: 'follow'
+async function forwardToGoogleDrive(webhookUrl, payload) {
+  if (!webhookUrl || typeof webhookUrl !== 'string' || !webhookUrl.startsWith('http')) {
+    return { success: false, error: 'Invalid Google Drive Webhook URL' };
+  }
+  try {
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(payload)
+    });
+    const text = await response.text();
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = { status: 'success', raw: text };
+    }
+    return { success: true, data: parsed };
+  } catch (err) {
+    console.warn('Failed to forward photo to Google Drive:', err);
+    return { success: false, error: err.toString() };
+  }
+}
+
 export function handleFeedbackApi(req, res, next) {
   const url = req.url || '';
   if (!url.startsWith('/api/')) {
@@ -307,10 +335,11 @@ export function handleFeedbackApi(req, res, next) {
     });
   }
 
-  // Route: GET /api/config (retrieve config including formsStatus and mediaDriveUrl)
+  // Route: GET /api/config (retrieve config including formsStatus, mediaDriveUrl and googleDriveWebhookUrl)
   if (url === '/api/config' && req.method === 'GET') {
     const config = readJson(CONFIG_FILE, { 
       googleSheetWebhookUrl: '',
+      googleDriveWebhookUrl: '',
       mediaDriveUrl: 'https://drive.google.com/drive/folders/1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX?usp=drive_link',
       formsStatus: { day1: true, day2: false, day3: false }
     });
@@ -320,19 +349,24 @@ export function handleFeedbackApi(req, res, next) {
     if (!config.mediaDriveUrl) {
       config.mediaDriveUrl = 'https://drive.google.com/drive/folders/1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX?usp=drive_link';
     }
+    config.googleDriveWebhookUrl = config.googleDriveWebhookUrl || '';
     return sendJson(200, config);
   }
 
-  // Route: POST /api/config (save config, formsStatus & mediaDriveUrl)
+  // Route: POST /api/config (save config, formsStatus, mediaDriveUrl & googleDriveWebhookUrl)
   if (url === '/api/config' && req.method === 'POST') {
     return parseBody((data) => {
       const config = readJson(CONFIG_FILE, { 
         googleSheetWebhookUrl: '',
+        googleDriveWebhookUrl: '',
         mediaDriveUrl: 'https://drive.google.com/drive/folders/1I_K2CNDEx9i9tX3e14P85PJcXHfk0EIX?usp=drive_link',
         formsStatus: { day1: true, day2: false, day3: false }
       });
       if (typeof data.googleSheetWebhookUrl === 'string') {
         config.googleSheetWebhookUrl = data.googleSheetWebhookUrl.trim();
+      }
+      if (typeof data.googleDriveWebhookUrl === 'string') {
+        config.googleDriveWebhookUrl = data.googleDriveWebhookUrl.trim();
       }
       if (typeof data.mediaDriveUrl === 'string') {
         config.mediaDriveUrl = data.mediaDriveUrl.trim();
@@ -352,6 +386,35 @@ export function handleFeedbackApi(req, res, next) {
       }
       writeJson(CONFIG_FILE, config);
       return sendJson(200, { success: true, config });
+    });
+  }
+
+  // Route: POST /api/test-drive (test Google Drive Webhook with live diagnostics)
+  if (url === '/api/test-drive' && req.method === 'POST') {
+    return parseBody(async (data) => {
+      const targetUrl = data.url || readJson(CONFIG_FILE, {}).googleDriveWebhookUrl;
+      if (!targetUrl || !targetUrl.startsWith('http')) {
+        return sendJson(400, { error: 'Please enter a valid Google Drive Web App URL.' });
+      }
+
+      // 1x1 transparent png for test ping
+      const dummyBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+      const testPayload = {
+        imageData: dummyBase64,
+        caption: 'Diagnostic Ping from Asgard Command Center',
+        uploaderName: 'S.H.I.E.L.D. Diagnostic Bot'
+      };
+
+      try {
+        const result = await forwardToGoogleDrive(targetUrl, testPayload);
+        if (result.success) {
+          return sendJson(200, { success: true, message: 'Google Drive connected successfully!', data: result.data });
+        } else {
+          return sendJson(500, { success: false, error: result.error });
+        }
+      } catch (err) {
+        return sendJson(500, { success: false, error: err.toString() });
+      }
     });
   }
 
@@ -915,7 +978,46 @@ export function handleFeedbackApi(req, res, next) {
       photos.push(newPhoto);
       writeJson(PHOTOS_FILE, photos);
 
+      // Auto-forward to Google Drive if configured
+      const config = readJson(CONFIG_FILE, {});
+      if (config.googleDriveWebhookUrl && config.googleDriveWebhookUrl.startsWith('http')) {
+        forwardToGoogleDrive(config.googleDriveWebhookUrl, {
+          imageData,
+          caption: (caption || '').trim(),
+          uploaderName: (uploaderName || '').trim() || 'Anonymous'
+        }).catch((err) => console.warn('Background Google Drive upload error:', err));
+      }
+
       return sendJson(200, { success: true, photo: { ...newPhoto, imageData: '[saved]' } });
+    });
+  }
+
+  // Route: POST /api/photos/upload-drive (directly upload to Google Drive via server proxy)
+  if (url === '/api/photos/upload-drive' && req.method === 'POST') {
+    return parseBody(async (data) => {
+      const { imageData, caption, uploaderName } = data;
+      if (!imageData) return sendJson(400, { error: 'Image data is required' });
+
+      const config = readJson(CONFIG_FILE, {});
+      const targetUrl = config.googleDriveWebhookUrl;
+      if (!targetUrl || !targetUrl.startsWith('http')) {
+        return sendJson(400, {
+          error: 'Google Drive auto-upload webhook is not configured yet in Admin settings.',
+          code: 'NO_WEBHOOK'
+        });
+      }
+
+      const result = await forwardToGoogleDrive(targetUrl, {
+        imageData,
+        caption: (caption || '').trim(),
+        uploaderName: (uploaderName || '').trim() || 'Anonymous'
+      });
+
+      if (result.success) {
+        return sendJson(200, { success: true, message: 'Photo uploaded directly to Google Drive!', data: result.data });
+      } else {
+        return sendJson(500, { success: false, error: result.error });
+      }
     });
   }
 

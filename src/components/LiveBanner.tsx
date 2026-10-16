@@ -120,7 +120,7 @@ export const LiveBanner: React.FC<LiveBannerProps> = ({ onSelectSession }) => {
             Countdown to Assembling
           </h3>
           <p className="text-xs text-muted-text mt-0.5">
-            ASGARD'CO 26 convenes Friday, October 16 at 14:00 in Africa/Casablanca.
+            ASGARD'CO 26 convenes Friday, October 16 at 17:00 in Africa/Casablanca.
           </p>
 
           {/* High-Impact Tabular Countdown Numbers */}
@@ -151,7 +151,7 @@ export const LiveBanner: React.FC<LiveBannerProps> = ({ onSelectSession }) => {
             >
               <div className="min-w-0">
                 <span className="text-[9px] font-mono uppercase tracking-widest text-endgame-gold font-bold block mb-0.5">
-                  FIRST OPERATION · {firstOp.effectiveStart || firstOp.time || '14:00'}
+                  FIRST OPERATION · {firstOp.effectiveStart || firstOp.time || '17:00'}
                 </span>
                 <span className="font-bold text-sm text-off-white truncate block group-hover:text-endgame-gold transition-colors">
                   {formatSessionTitle(firstOp.title)}
@@ -171,9 +171,9 @@ export const LiveBanner: React.FC<LiveBannerProps> = ({ onSelectSession }) => {
             <div className="flex items-center gap-2 min-w-0">
               <Compass className="w-4 h-4 text-arc-blue shrink-0" />
               <div className="min-w-0">
-                <span className="font-bold text-off-white block text-[11px]">Check-In Window: 08:00 – 14:00</span>
+                <span className="font-bold text-off-white block text-[11px]">Check-In Window: 08:00 – 17:00</span>
                 <span className="text-[10px] text-muted-text block truncate">
-                  Registration Gate open from 08:00 to 14:00 for security credential verification & mission packs.
+                  Registration Gate open from 08:00 to 17:00 for security credential verification & mission packs.
                 </span>
               </div>
             </div>
