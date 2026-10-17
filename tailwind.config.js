@@ -62,16 +62,16 @@ export default {
           light: '#FAFAFA'
         },
 
-        // UI Surfaces & Text
+        // UI Surfaces & Text mapped dynamically to CSS variables
         surface: {
-          DEFAULT: '#0F131D',
-          card: '#121824',
-          hover: '#182133',
-          glass: 'rgba(15, 19, 29, 0.75)'
+          DEFAULT: 'var(--surface-solid)',
+          card: 'var(--card-bg)',
+          hover: 'var(--surface-hover)',
+          glass: 'var(--card-bg)'
         },
-        'off-white': '#F5F5F5',
-        'muted-text': '#8B94A0',
-        'dim-text': '#525B6A',
+        'off-white': 'var(--off-white)',
+        'muted-text': 'var(--text-muted)',
+        'dim-text': 'var(--text-dim)',
 
         // Legacy aliases mapped to brand guide for backward compatibility
         'marvel-red': {

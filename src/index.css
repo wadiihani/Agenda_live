@@ -123,6 +123,61 @@
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
+
+  /* Global light mode typography & contrast enhancements */
+  html.light {
+    color: #0F172A;
+  }
+
+  html.light body {
+    color: #0F172A;
+  }
+
+  html.light .text-off-white {
+    color: #0F172A !important;
+  }
+
+  html.light .text-muted-text {
+    color: #475569 !important;
+  }
+
+  html.light .text-dim-text {
+    color: #64748B !important;
+  }
+
+  html.light .text-white {
+    color: #0F172A !important;
+  }
+
+  html.light .text-white\/90,
+  html.light .text-white\/80,
+  html.light .text-white\/70 {
+    color: #1E293B !important;
+  }
+
+  html.light .text-off-white\/90,
+  html.light .text-off-white\/80,
+  html.light .text-off-white\/70 {
+    color: #1E293B !important;
+  }
+
+  html.light .border-white\/10,
+  html.light .border-white\/8,
+  html.light .border-white\/6,
+  html.light .border-white\/5 {
+    border-color: rgba(15, 23, 42, 0.12) !important;
+  }
+
+  html.light .bg-white\/5,
+  html.light .bg-white\/10 {
+    background-color: rgba(15, 23, 42, 0.05) !important;
+  }
+
+  html.light .bg-white\/\[0\.02\],
+  html.light .bg-white\/\[0\.03\],
+  html.light .bg-white\/\[0\.04\] {
+    background-color: rgba(15, 23, 42, 0.03) !important;
+  }
 }
 
 /* ==========================================================================
