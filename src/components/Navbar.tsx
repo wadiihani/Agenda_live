@@ -4,6 +4,7 @@ import { Zap, Sparkles } from 'lucide-react';
 import { useTimeSim } from '../context/TimeSimContext';
 import { useLiveSession } from '../hooks/useLiveSession';
 import { useAdmin } from '../context/AdminContext';
+import { ThemeToggle } from './ThemeToggle';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
@@ -106,6 +107,8 @@ export const Navbar: React.FC = () => {
               LIVE
             </div>
           )}
+
+          <ThemeToggle showLabel={true} />
 
           <button
             onClick={() => setIsSimModalOpen(true)}

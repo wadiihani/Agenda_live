@@ -87,7 +87,10 @@ export const SessionCard: React.FC<SessionCardProps> = ({
                     {session.time}
                   </span>
                 )}
-                <span className={isDelayed ? 'text-amber-400' : ''}>{effectiveStart}</span>
+                <span className={isDelayed ? 'text-amber-400' : ''}>
+                  {effectiveStart}
+                  {effectiveEnd ? ` – ${effectiveEnd}` : ''}
+                </span>
               </>
             ) : (
               <span className="text-[10px] text-muted-text/60 font-mono">#{index + 1}</span>
@@ -193,18 +196,23 @@ export const SessionCard: React.FC<SessionCardProps> = ({
         <div className="flex items-center gap-2">
           {/* Time Marker */}
           {effectiveStart ? (
-            <div className="flex items-center gap-1.5 text-xs font-bold text-off-white tabular-nums">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-off-white tabular-nums flex-wrap">
               <Clock className="w-3.5 h-3.5 text-endgame-gold shrink-0" />
               {isDelayed && (
                 <span className="line-through text-muted-text/60 text-[11px] font-normal">
                   {session.time}
                 </span>
               )}
-              <span className={isDelayed ? 'text-amber-400 font-extrabold' : ''}>
-                {effectiveStart}
-                {effectiveEnd ? ` – ${effectiveEnd}` : ''}
-              </span>
-              {session.duration && (
+              {effectiveEnd ? (
+                <span className={isDelayed ? 'text-amber-400 font-extrabold' : ''}>
+                  {effectiveStart} – {effectiveEnd}
+                </span>
+              ) : (
+                <span className={isDelayed ? 'text-amber-400 font-extrabold' : ''}>
+                  Starts at {effectiveStart} <span className="text-muted-text font-normal">· End time TBD</span>
+                </span>
+              )}
+              {session.duration && effectiveEnd && (
                 <span className="text-[10px] font-mono text-muted-text/80 px-1.5 py-0.5 rounded bg-white/5 border border-white/5 shrink-0">
                   {typeof session.duration === 'number' ? `${session.duration}m` : session.duration}
                 </span>
@@ -213,7 +221,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({
           ) : (
             <div className="flex items-center gap-1.5 text-xs font-medium text-muted-text tabular-nums">
               <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 border border-white/8 text-muted-text/90">
-                Session {index + 1}
+                Time TBD · Session {index + 1}
               </span>
             </div>
           )}
@@ -244,6 +252,12 @@ export const SessionCard: React.FC<SessionCardProps> = ({
                 : session.track === 'all'
                 ? 'All Membership'
                 : session.track}
+            </span>
+          )}
+
+          {session.isOvernight && (
+            <span className="px-2 py-0.5 rounded-full bg-infinity-purple/20 text-purple-300 border border-infinity-purple/40 text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 font-mono">
+              <span>Overnight</span>
             </span>
           )}
 

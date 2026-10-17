@@ -384,16 +384,19 @@ export const AgendaPage: React.FC = () => {
         <div className="flex items-start gap-2.5 p-3 rounded-xl bg-arc-blue/10 border border-arc-blue/30 text-xs text-arc-blue font-sans">
           <Info className="w-4 h-4 shrink-0 mt-0.5 text-arc-blue" />
           <div>
-            <span className="font-bold">iGV Members Track:</span> Parallel session <strong>The Power of the Pitch</strong> confirmed. Remaining track sessions are unassigned in official schedule and pending confirmation.
+            <span className="font-bold">iGV Members Track:</span> Parallel session <strong>The Power of the Pitch (15:45)</strong> confirmed. Plenary sessions, breaks, and gala activities are shared across the entire delegation.
           </div>
         </div>
       )}
 
       {activeDay.dayNumber === 3 && activeTrack === 'mms' && (
-        <div className="flex items-start gap-2.5 p-3 rounded-xl bg-endgame-gold/10 border border-endgame-gold/30 text-xs text-endgame-gold font-sans">
+        <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-endgame-gold/10 border border-endgame-gold/30 text-xs text-endgame-gold font-sans">
           <Info className="w-4 h-4 shrink-0 mt-0.5 text-endgame-gold" />
           <div>
-            <span className="font-bold">MMs & Oldies Track:</span> Shared plenaries and spaces displayed. Specialized parallel sessions for MMs & Oldies are pending official confirmation.
+            <span className="font-bold">MMs & Oldies Track (Pending Official Schedule):</span> 
+            <p className="mt-0.5 text-off-white/90 leading-relaxed">
+              The MMs & Oldies participant group is recognized in the official schedule structure, but dedicated parallel sessions are pending organizer confirmation. General plenary sessions (Morning, Hierarchy, Closing) and meals are accessible to all membership.
+            </p>
           </div>
         </div>
       )}

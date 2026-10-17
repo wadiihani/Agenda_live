@@ -2,15 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { TimeSimProvider } from './context/TimeSimContext';
+import { ThemeProvider } from './context/ThemeContext';
 import App from './App';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <TimeSimProvider>
-        <App />
-      </TimeSimProvider>
+      <ThemeProvider>
+        <TimeSimProvider>
+          <App />
+        </TimeSimProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

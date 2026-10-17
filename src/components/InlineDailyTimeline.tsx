@@ -236,9 +236,30 @@ export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId,
 
       {/* Empty State if filter yields no sessions */}
       {timeSlotGroups.length === 0 && (
-        <div className="p-6 rounded-2xl glass-card border border-white/8 text-center text-xs text-muted-text">
-          <p className="font-semibold text-off-white">No sessions match your active filter.</p>
-          <p className="mt-1">Try switching to "All Tracks" or clearing the Saved filter.</p>
+        <div className="p-6 rounded-2xl glass-card border border-white/8 text-center text-xs text-muted-text space-y-2">
+          {activeTrack === 'mms' && selectedDay.dayNumber === 3 ? (
+            <div className="max-w-sm mx-auto">
+              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-endgame-gold/15 text-endgame-gold border border-endgame-gold/30 mb-2">
+                MMs & Oldies Track · Schedule Pending
+              </span>
+              <p className="font-semibold text-off-white text-sm">Dedicated MMs & Oldies schedule not yet published</p>
+              <p className="mt-1 leading-relaxed text-muted-text">
+                Detailed specialized sessions for this track are awaiting official confirmation from conference organizers. Switch to <strong>All Membership</strong> to see shared plenaries and spaces.
+              </p>
+              <button
+                type="button"
+                onClick={() => setActiveTrack('all')}
+                className="mt-3 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/15 text-off-white font-semibold text-xs transition-colors"
+              >
+                View All Membership Plenaries
+              </button>
+            </div>
+          ) : (
+            <div>
+              <p className="font-semibold text-off-white">No sessions match your active filter.</p>
+              <p className="mt-1">Try switching to "All Tracks" or clearing the Saved filter.</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -405,9 +426,13 @@ export const InlineDailyTimeline: React.FC<InlineDailyTimelineProps> = ({ dayId,
                             ) : null}
                             <span className="font-mono font-bold text-off-white">
                               {session.adjustedTime || session.time}
+                              {(session.adjustedEndTime || session.endTime) ? ` – ${session.adjustedEndTime || session.endTime}` : ''}
                             </span>
-                            {session.duration && (
+                            {session.duration && (session.adjustedEndTime || session.endTime) && (
                               <span className="text-muted-text/60">({session.duration})</span>
+                            )}
+                            {!(session.adjustedEndTime || session.endTime) && (
+                              <span className="text-[10px] text-muted-text/70 italic">(End TBD)</span>
                             )}
                             {session.track && session.track !== 'all' && (
                               <span className="px-1.5 py-0.2 rounded bg-infinity-purple/20 text-purple-300 text-[9px] font-mono border border-infinity-purple/30 uppercase">

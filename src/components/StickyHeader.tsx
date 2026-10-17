@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { RefreshCw, WifiOff, Zap, Download, X, Share, PlusSquare } from 'lucide-react';
 import { useAgenda } from '../context/AgendaContext';
 import { useTimeSim } from '../context/TimeSimContext';
+import { ThemeToggle } from './ThemeToggle';
 
 export const StickyHeader: React.FC = () => {
   const { syncStatus, lastSyncedAt, syncNow, delayMinutes, isDelayActive } = useAgenda();
@@ -106,7 +107,7 @@ export const StickyHeader: React.FC = () => {
     return (
       <button
         onClick={handleManualSync}
-        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider transition-all border active:scale-95 bg-emerald-950/60 text-emerald-400 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.15)]"
+        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider transition-all border active:scale-95 bg-emerald-950/60 dark:bg-emerald-950/60 light:bg-emerald-100 text-emerald-400 dark:text-emerald-400 light:text-emerald-700 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.15)]"
         title={`Status: LIVE • ON TIME (Synced: ${formatLastSync(lastSyncedAt)}). Tap to sync schedule.`}
         aria-label="Live connection synced and on time. Tap to sync schedule now."
       >
@@ -122,7 +123,7 @@ export const StickyHeader: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-30 w-full bg-[#070A10]/95 backdrop-blur-xl border-b border-white/8 transition-all">
+      <header className="sticky top-0 z-30 w-full bg-[var(--header-bg)] backdrop-blur-xl border-b border-white/8 dark:border-white/8 light:border-slate-200 transition-colors">
         <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2.5">
           <div className="flex items-center justify-between gap-2">
             {/* Brand Visual Mark & Single Concise Date String */}
@@ -155,10 +156,13 @@ export const StickyHeader: React.FC = () => {
               </div>
             </button>
 
-            {/* Right Action Cluster: Confidence Badge + Time Machine + PWA Install */}
+            {/* Right Action Cluster: Confidence Badge + Theme Toggle + Time Machine + PWA Install */}
             <div className="flex items-center gap-1.5 sm:gap-2">
               {/* Truthful Live Confidence Badge */}
               {renderConfidenceBadge()}
+
+              {/* Light / Dark Mode Toggle */}
+              <ThemeToggle showLabel={false} />
 
               {/* Time Simulator Trigger */}
               <button
@@ -166,7 +170,7 @@ export const StickyHeader: React.FC = () => {
                 className={`p-1.5 rounded-full border text-xs transition-all active:scale-90 ${
                   simulatedTime
                     ? 'bg-endgame-gold/20 text-endgame-gold border-endgame-gold/60 shadow-[0_0_10px_rgba(212,175,55,0.3)]'
-                    : 'bg-white/5 text-muted-text hover:text-off-white border-white/10 hover:border-white/20'
+                    : 'bg-white/5 dark:bg-white/5 light:bg-black/5 text-muted-text hover:text-off-white border-white/10 dark:border-white/10 light:border-slate-300'
                 }`}
                 title="Time Machine Simulator — Travel through conference timeline & test states"
                 aria-label="Open Time Machine Simulator"
@@ -178,7 +182,7 @@ export const StickyHeader: React.FC = () => {
               {!isInstalled && (
                 <button
                   onClick={handleInstallClick}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-endgame-gold/40 text-[10px] font-label font-semibold text-off-white transition-all active:scale-95"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 dark:bg-white/5 light:bg-black/5 hover:bg-white/10 border border-white/10 dark:border-white/10 light:border-slate-300 hover:border-endgame-gold/40 text-[10px] font-label font-semibold text-off-white transition-all active:scale-95"
                   title="Install ASGARD'CO 26 App on your phone"
                   aria-label="Install ASGARD'CO 26 App"
                 >

@@ -5,6 +5,17 @@
 @layer base {
   :root {
     --bg-color: #070A10;
+    --text-primary: #F1F5F9;
+    --text-muted: #8B94A0;
+    --text-dim: #525B6A;
+    --card-bg: rgba(14, 19, 30, 0.72);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.65);
+    --header-bg: rgba(7, 10, 16, 0.92);
+    --surface-solid: #121824;
+    --surface-hover: #182133;
+    --pill-bg: rgba(255, 255, 255, 0.05);
+
     --stark-red: #B71C1C;
     --infinity-purple: #6A1B9A;
     --cosmic-blue: #283593;
@@ -16,22 +27,58 @@
     --off-white: #F1F5F9;
   }
 
-  /* Browser surface theming (Impeccable craft floor) */
+  html.light {
+    --bg-color: #F8FAFC;
+    --text-primary: #0F172A;
+    --text-muted: #475569;
+    --text-dim: #94A3B8;
+    --card-bg: rgba(255, 255, 255, 0.88);
+    --card-border: rgba(15, 23, 42, 0.12);
+    --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+    --header-bg: rgba(248, 250, 252, 0.94);
+    --surface-solid: #FFFFFF;
+    --surface-hover: #F1F5F9;
+    --pill-bg: rgba(15, 23, 42, 0.04);
+
+    --stark-red: #C62828;
+    --infinity-purple: #7B1FA2;
+    --cosmic-blue: #1E3A8A;
+    --endgame-gold: #B45309;
+    --energy-orange: #EA580C;
+    --steel-grey: #475569;
+    --iron-grey: #E2E8F0;
+    --infinity-white: #0F172A;
+    --off-white: #0F172A;
+  }
+
+  /* Browser surface theming */
   ::selection {
-    background: rgba(212, 175, 55, 0.32);
+    background: rgba(212, 175, 55, 0.35);
     color: #FFFFFF;
   }
 
+  html.light ::selection {
+    background: rgba(180, 83, 9, 0.3);
+    color: #0F172A;
+  }
+
   html {
-    color-scheme: dark;
     scroll-behavior: smooth;
     text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
   }
 
+  html.dark {
+    color-scheme: dark;
+  }
+
+  html.light {
+    color-scheme: light;
+  }
+
   body {
     background-color: var(--bg-color);
-    color: var(--off-white);
+    color: var(--text-primary);
     font-family: 'Inter', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
     min-height: 100vh;
@@ -39,6 +86,7 @@
     -moz-osx-font-smoothing: grayscale;
     caret-color: var(--endgame-gold);
     letter-spacing: -0.015em;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   /* Custom Slim Tactical Scrollbars */
@@ -156,11 +204,16 @@
    HIGH-END LAYERED GLASS & SURFACE TOKENS (HIGH-END-VISUAL-DESIGN)
    ========================================================================== */
 .glass-card {
-  background: rgba(14, 19, 30, 0.72);
+  background: var(--card-bg);
   backdrop-filter: blur(20px) saturate(170%);
   -webkit-backdrop-filter: blur(20px) saturate(170%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 12px 32px -8px rgba(0, 0, 0, 0.65);
+  border: 1px solid var(--card-border);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), var(--card-shadow);
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+html.light .glass-card {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.9), var(--card-shadow);
 }
 
 .glass-card-hover {
@@ -168,16 +221,24 @@
 }
 
 .glass-card-hover:hover {
-  background: rgba(20, 27, 43, 0.85);
-  border-color: rgba(255, 255, 255, 0.16);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.14), 0 16px 40px -10px rgba(0, 0, 0, 0.75);
+  background: var(--surface-hover);
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.14), 0 16px 40px -10px rgba(0, 0, 0, 0.2);
   transform: translateY(-1px);
+}
+
+html.light .aurora-mesh {
+  opacity: 0.25;
 }
 
 /* Tactical subtle scanline texture for S.H.I.E.L.D. feel */
 .tactical-grid {
   background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+html.light .tactical-grid {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px);
 }
 
 /* High-contrast metallic headings */
@@ -187,8 +248,20 @@
   -webkit-text-fill-color: transparent;
 }
 
+html.light .text-metallic-gold {
+  background: linear-gradient(180deg, #92400E 0%, #B45309 60%, #78350F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .text-metallic-silver {
   background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 50%, #94A3B8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html.light .text-metallic-silver {
+  background: linear-gradient(180deg, #1E293B 0%, #334155 50%, #64748B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

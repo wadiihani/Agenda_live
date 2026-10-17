@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdmin } from '../context/AdminContext';
+import { ThemeToggle } from './ThemeToggle';
 
 export const BottomNav: React.FC = () => {
   const [showMore, setShowMore] = useState(false);
@@ -131,6 +132,12 @@ export const BottomNav: React.FC = () => {
                   </NavLink>
                 );
               })}
+
+              {/* Theme Toggle row in mobile More drawer */}
+              <div className="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider text-muted-text bg-white/[0.02] border border-white/5">
+                <span className="flex items-center gap-2">Theme Mode</span>
+                <ThemeToggle showLabel={true} />
+              </div>
 
               {isAdmin && (
                 <>

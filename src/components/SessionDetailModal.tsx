@@ -249,13 +249,19 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
                           {session.time} {session.endTime ? `– ${session.endTime}` : ''}
                         </span>
                       )}
-                      <span className={`font-bold tabular-nums ${isDelayed ? 'text-amber-400 font-extrabold' : 'text-off-white'}`}>
-                        {effectiveStart} {effectiveEnd ? `– ${effectiveEnd}` : ''}
-                      </span>
+                      {effectiveEnd ? (
+                        <span className={`font-bold tabular-nums ${isDelayed ? 'text-amber-400 font-extrabold' : 'text-off-white'}`}>
+                          {effectiveStart} – {effectiveEnd}
+                        </span>
+                      ) : (
+                        <span className={`font-bold tabular-nums ${isDelayed ? 'text-amber-400 font-extrabold' : 'text-off-white'}`}>
+                          Starts at {effectiveStart} <span className="text-muted-text font-normal text-xs">· End time TBD</span>
+                        </span>
+                      )}
                     </>
                   ) : (
                     <span className="text-xs text-muted-text font-medium italic">
-                      Official time TBA
+                      Official time TBD
                     </span>
                   )}
                 </div>

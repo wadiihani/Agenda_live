@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,8 +8,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Base Conference Midnight (constant across all three days)
-        background: '#080B12',
+        // Dynamic Theme background & text variables
+        background: 'var(--bg-color)',
         midnight: '#080B12',
         'iron-grey': '#252A34',
         'infinity-white': '#F5F5F5',

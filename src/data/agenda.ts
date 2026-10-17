@@ -36,6 +36,8 @@ export interface Session {
   responsible?: string; // alias for facilitator
   badge?: 'Director' | 'S.H.I.E.L.D. Agent' | 'Tower Commander' | 'Ops Crew' | string;
   track?: TrackType;
+  isOvernight?: boolean;
+  day?: string | number;
   concreteObjective?: string;
   emotionalObjective?: string;
   learningObjectives?: string[];
@@ -375,14 +377,16 @@ Because the goal is not to create one hero who saves Rabat. The goal is to build
           endTime: "04:00",
           duration: "165 min",
           type: "party",
-          title: "Party D1 : XXXX",
+          title: "Party – Day 1",
           room: "Grand Hall • Asgardian Terrace",
           location: "Grand Hall • Asgardian Terrace",
           facilitator: "OC Team",
           responsible: "OC Team",
           track: "all",
+          isOvernight: true,
+          day: 1,
           status: "scheduled",
-          essence: "First night icebreaking celebration, festive music, and social connection.",
+          essence: "First night icebreaking celebration, festive music, and social connection following Day 1 evening activities.",
           concreteObjective: "Celebrate community bonds and welcome operatives into the Avengers cohort.",
           emotionalObjective: "High energy, laughter, and unity."
         }
@@ -679,14 +683,16 @@ Because the goal is not to create one hero who saves Rabat. The goal is to build
           endTime: "03:00",
           duration: "105 min",
           type: "party",
-          title: "Party D2 : XXXX",
+          title: "Party – Day 2",
           room: "Grand Hall • Asgardian Terrace",
           location: "Grand Hall • Asgardian Terrace",
           facilitator: "OC Team",
           responsible: "OC Team",
           track: "all",
+          isOvernight: true,
+          day: 2,
           status: "scheduled",
-          essence: "Late-night celebration, music, and euphoria following the Gala Night.",
+          essence: "Late-night celebration, music, and euphoria following the Day 2 Gala Night. (Overnight association with Day 2, occurring early Sunday morning 01:15).",
           concreteObjective: "Unwind and celebrate collective achievements.",
           emotionalObjective: "Euphoria, connection, and celebration."
         }

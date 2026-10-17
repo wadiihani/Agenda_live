@@ -35,9 +35,9 @@ export const TimeSimModal: React.FC = () => {
       day: 1
     },
     {
-      label: 'Day 2: Sat Oct 17 · 11:45 (Parallel Tracks)',
-      sub: 'State 2: IN_SESSION · "Synergy" (Newbies) vs "Power of Pitch" (iGV)',
-      value: '2026-10-17T11:45:00',
+      label: 'Day 2: Sat Oct 17 · 15:45 (Parallel Tracks)',
+      sub: 'State 2: IN_SESSION · "Synergy" (Newbies) vs "The Power of the Pitch" (iGV)',
+      value: '2026-10-17T15:45:00',
       day: 2
     },
     {
