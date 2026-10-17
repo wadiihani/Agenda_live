@@ -28,27 +28,27 @@
   }
 
   html.light {
-    --bg-color: #F8FAFC;
-    --text-primary: #0F172A;
-    --text-muted: #475569;
-    --text-dim: #94A3B8;
-    --card-bg: rgba(255, 255, 255, 0.88);
-    --card-border: rgba(15, 23, 42, 0.12);
-    --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
-    --header-bg: rgba(248, 250, 252, 0.94);
+    --bg-color: #FAF7F2;
+    --text-primary: #1C1917;
+    --text-muted: #57534E;
+    --text-dim: #78716C;
+    --card-bg: rgba(255, 253, 250, 0.94);
+    --card-border: rgba(68, 64, 60, 0.12);
+    --card-shadow: 0 10px 25px -5px rgba(41, 37, 36, 0.07), 0 4px 6px -2px rgba(41, 37, 36, 0.04);
+    --header-bg: rgba(250, 247, 242, 0.96);
     --surface-solid: #FFFFFF;
-    --surface-hover: #F1F5F9;
-    --pill-bg: rgba(15, 23, 42, 0.04);
+    --surface-hover: #F5EFE6;
+    --pill-bg: rgba(68, 64, 60, 0.06);
 
-    --stark-red: #C62828;
-    --infinity-purple: #7B1FA2;
-    --cosmic-blue: #1E3A8A;
+    --stark-red: #B91C1C;
+    --infinity-purple: #7E22CE;
+    --cosmic-blue: #1D4ED8;
     --endgame-gold: #B45309;
-    --energy-orange: #EA580C;
+    --energy-orange: #C2410C;
     --steel-grey: #475569;
-    --iron-grey: #E2E8F0;
-    --infinity-white: #0F172A;
-    --off-white: #0F172A;
+    --iron-grey: #E7E0D3;
+    --infinity-white: #1C1917;
+    --off-white: #1C1917;
   }
 
   /* Browser surface theming */
@@ -58,8 +58,8 @@
   }
 
   html.light ::selection {
-    background: rgba(180, 83, 9, 0.3);
-    color: #0F172A;
+    background: rgba(180, 83, 9, 0.25);
+    color: #1C1917;
   }
 
   html {
@@ -126,57 +126,57 @@
 
   /* Global light mode typography & contrast enhancements */
   html.light {
-    color: #0F172A;
+    color: #1C1917;
   }
 
   html.light body {
-    color: #0F172A;
+    color: #1C1917;
   }
 
   html.light .text-off-white {
-    color: #0F172A !important;
+    color: #1C1917 !important;
   }
 
   html.light .text-muted-text {
-    color: #475569 !important;
+    color: #57534E !important;
   }
 
   html.light .text-dim-text {
-    color: #64748B !important;
+    color: #78716C !important;
   }
 
   html.light .text-white {
-    color: #0F172A !important;
+    color: #1C1917 !important;
   }
 
   html.light .text-white\/90,
   html.light .text-white\/80,
   html.light .text-white\/70 {
-    color: #1E293B !important;
+    color: #292524 !important;
   }
 
   html.light .text-off-white\/90,
   html.light .text-off-white\/80,
   html.light .text-off-white\/70 {
-    color: #1E293B !important;
+    color: #292524 !important;
   }
 
   html.light .border-white\/10,
   html.light .border-white\/8,
   html.light .border-white\/6,
   html.light .border-white\/5 {
-    border-color: rgba(15, 23, 42, 0.12) !important;
+    border-color: rgba(68, 64, 60, 0.14) !important;
   }
 
   html.light .bg-white\/5,
   html.light .bg-white\/10 {
-    background-color: rgba(15, 23, 42, 0.05) !important;
+    background-color: rgba(68, 64, 60, 0.05) !important;
   }
 
   html.light .bg-white\/\[0\.02\],
   html.light .bg-white\/\[0\.03\],
   html.light .bg-white\/\[0\.04\] {
-    background-color: rgba(15, 23, 42, 0.03) !important;
+    background-color: rgba(68, 64, 60, 0.03) !important;
   }
 }
 
@@ -293,7 +293,7 @@ html.light .aurora-mesh {
 }
 
 html.light .tactical-grid {
-  background-image: radial-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(41, 37, 36, 0.07) 1px, transparent 1px);
 }
 
 /* High-contrast metallic headings */
